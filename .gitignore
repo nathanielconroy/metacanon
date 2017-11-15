@@ -1,0 +1,12 @@
+# Ignore all third party code.
+vendor/
+
+# Ignore database config.
+php/DatabaseConfig.php
+
+error_log
+.htaccess
+.buildpath
+.project
+.settings/
+*.log

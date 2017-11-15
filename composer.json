@@ -1,0 +1,9 @@
+{
+    "require": {
+        "latitude/latitude": "^2.3"
+    }
+,
+    "autoload": {
+        "psr-4": {"Metacanon\\": "php/"}
+    }
+}
