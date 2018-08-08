@@ -25,10 +25,7 @@
 </table>
 </div>
 
-<div class="w3-container w3-row w3-padding-8" style="background: #eee;text-align:center">
-<a href="https://twitter.com/metacanonorg" target="_blank"><img src="images/Twitter_logo_red_32.png" alt="Follow us on Twitter."></a>
-<a href="https://www.facebook.com/metacanonorg" target="_blank"><img src="images/facebooklogored32.png" alt="Like us on Facebook."></a>
-</div>
+
 
 </div>
 
