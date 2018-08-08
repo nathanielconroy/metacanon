@@ -93,11 +93,10 @@ places <i>Invisible Man </i>at number 2 on the list, just below <i>Beloved </i>(
 <p>Future versions of Metacanon will allow users to customize this definition dynamically, for example, by including only novels actually written in the United States (sorry James) or by including novels written anywhere on the North American continent or anywhere in the Americas more generally. In addition, users will have the option to build custom lists based on criteria other than national belonging.</p>
 
 <h2>Who is behind this project?</h2>
-<p>Metacanon was designed by Nathaniel Conroy, a recent Ph.D. from the English department at Brown University and a current Scholar in Residence in the Literature Department at American University in Washington, DC.</p>
+<p>Metacanon is developed and maintained by Nathaniel Conroy.</p>
 
 <h2>What if I notice something that's missing?</h2>
-
-<p>If you think there's a book that should be included here but isn't, you can contact me by sending an email to <a href="mailto:nathanielaconroy@gmail.com">nconroy@american.edu</a> or by tweeting me <a href="https://twitter.com/ConroyNathaniel">@ConroyNathaniel</a>.</p>
+<p>If you think there's a book that should be included here but isn't, you can contact me by sending an email to <a href="mailto:nathanielaconroy@gmail.com">nathanielaconroy@gmail.com</a> or by tweeting me <a href="https://twitter.com/ConroyNathaniel">@ConroyNathaniel</a>.</p>
 
 
 </div>
