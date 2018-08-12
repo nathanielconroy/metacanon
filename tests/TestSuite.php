@@ -7,69 +7,6 @@ class TestSuite
 		list($usec, $sec) = explode(" ", microtime());
 		return ((float)$usec + (float)$sec);
 	}
-	
-	public function userRegistrationTest()
-	{		
-		$testPassed = true;
-		
-		$_POST['submit'] = 'Register';
-		$_POST['username'] = 'newUser' . rand(1000,10000);
-		$_POST['password'] = 'stupidPassword' . rand(1000,10000);
-		$_POST['email'] = 'newuseremail@emailplace.com';
-		$_POST['rememberMe'] = true;
-		
-		UserHandling::register();
-		
-		if (isset($_SESSION['msg']['reg-err']))
-		{
-			echo 'Registration test failed.<br>';
-			echo $_SESSION['msg']['reg-err'];
-		}
-		else
-		{
-			echo 'Registration test passed.<br>';
-		}
-	}
-	
-	public function userLoginTest()
-	{
-		$testPassed = true;
-		
-		$_POST['submit'] = 'Login';
-		$_POST['username'] = "dummyUsr";
-		$_POST['password'] = "mypassword";
-		$_POST['rememberMe'] = true;
-		
-		UserHandling::logIn();
-		
-		$testPassed = $_SESSION['msg']['login-err'] == "Wrong username and/or password!";
-		
-		$_POST['submit'] = "Login";
-		$_POST['username'] = "testUser";
-		$_POST['password'] = "testPassword";
-		$_POST['rememberMe'] = true;
-		
-		UserHandling::logIn();
-		
-		if (isset($_SESSION['msg']) && $_SESSION['msg']['login-err'] == "Wrong username and/or password!")
-		{
-			$testPassed = false;
-		}
-		
-		if ($testPassed)
-		{
-			echo 'User login test passed.';
-			echo '<br>The current user is: ' . $_SESSION['usr'] . '.';
-		}
-		else
-		{
-			echo $_SESSION['msg']['login-err'];
-			echo 'User login test failed.';
-			echo '<br>The current user is: ' . $_SESSION['usr'] . '.';
-		}
-		
-		echo '<br>';
-	}
 
 	public function onePerAuthorTest()
 	{

@@ -1,7 +1,15 @@
 <?php
 
 class UserHandling
-{   
+{
+	static private function GetUsersDatabaseConnection()
+	{
+		$mysqli = new mysqli("localhost", ADMIN, PASSWORD, DATABASE);
+		if (!$mysqli)
+		{ echo 'Failed to connect to database'; }
+		return $mysqli;
+	}
+	
 	public function getBooksReadByUser($user)
 	{
 		$mysqli = GetUsersDatabaseConnection();
@@ -59,15 +67,15 @@ class UserHandling
 	    $result = $mysqli->query("DELETE FROM metacanonuserpresets WHERE presetid='$preset_id'");
 	}
 	
-	public function register()
+	static public function register()
 	{
-		$mysqli = GetUsersDatabaseConnection();
+		$mysqli = UserHandling::GetUsersDatabaseConnection();
+		
+		$err = array();
 		
 		if (isset($_POST['user_submit']) && $_POST['user_submit']=='Register')
 		{
 			// If the Register form has been submitted
-			
-			$err = array();
 			
 			if(strlen($_POST['username'])<4 || strlen($_POST['username'])>32)
 			{
@@ -79,10 +87,8 @@ class UserHandling
 				$err[]='Your username contains invalid characters! Please try again.';
 			}
 			
-			if(!checkEmail($_POST['email']))
-			{
-				$err[]='Your email is not valid! Please try again.';
-			}
+			if (!isset($_SERVER['REMOTE_ADDR'])) { $ip_address = "none"; }
+			else { $ip_address = $_SERVER['REMOTE_ADDR']; }
 			
 			if(!count($err))
 			{
@@ -95,14 +101,14 @@ class UserHandling
 				$_POST['username'] = mysqli_real_escape_string($mysqli,$_POST['username']);
 				// Escape the input data
 				
-				$query = "	INSERT INTO metausers(user,pass,email,regIP,dt,booksread)
+				$query = "	INSERT INTO metausers(usr,pass,email,regIP,dt,booksread)
 								VALUES(
 								
 									'".$_POST['username']."',
 									'".md5($pass)."',
 									'".$_POST['email']."',
-									'".$_SERVER['REMOTE_ADDR']."',
-									" . $_SERVER['REQUEST_TIME'] . ",
+									'".$ip_address."',
+									NOW() ,
 									','
 									
 								)";
@@ -111,21 +117,25 @@ class UserHandling
 				
 				if(mysqli_affected_rows($mysqli)==1)
 				{
-					send_mail(	'nathaniel_conroy@alumni.brown.edu',
-								$_POST['email'],
-								'Your Metacanon Password',
-								'Your password is: '.$pass);
+					// send_mail(	'nathaniel_conroy@alumni.brown.edu',
+								// $_POST['email'],
+								// 'Your Metacanon Password',
+								// 'Your password is: '.$pass);
 
 					$_SESSION['msg']['reg-success']='You\'re account is now set up. We\'ve sent you an email with your password for your records!';
 				}
-				else $err[]='This username is already taken!';
+				else $err[]=$mysqli->error;
 			}
-
-			if(count($err))
-			{
-				$_SESSION['msg']['reg-err'] = implode('<br />',$err);
-			}	
 		}
+		else
+		{
+			$err[]='Form failed to submit.';
+		}
+		
+		if(count($err))
+		{
+			$_SESSION['msg']['reg-err'] = implode('<br />',$err);
+		}	
 	}
 	
 	public function logOff()
@@ -134,9 +144,9 @@ class UserHandling
 		session_destroy();
 	}
 
-	public function logIn()
+	static public function logIn($set_cookies=true)
 	{	
-		$mysqli = GetUsersDatabaseConnection();
+		$mysqli = UserHandling::GetUsersDatabaseConnection();
 		
 		// Those two files can be included only if INCLUDE_CHECK is defined
 
@@ -170,19 +180,23 @@ class UserHandling
 				
 				// Escaping all input data
 				
-				$row = mysqli_fetch_assoc(mysqli_query($mysqli,"SELECT id,user FROM metausers WHERE user='{$_POST['username']}' OR email='{$_POST['username']}' AND pass='".md5($_POST['password'])."'"));
+				$results = mysqli_query($mysqli,"SELECT id,usr FROM metausers WHERE usr='{$_POST['username']}' OR email='{$_POST['username']}' AND pass='".md5($_POST['password'])."'");
+				
+				$row = mysqli_fetch_assoc($results);
 
-				if($row['user'])
+				if($row['usr'])
 				{
 					// If everything is OK UserHandling
 					
-					$_SESSION['usr']=$row['user'];
+					$_SESSION['usr']=$row['usr'];
 					$_SESSION['id'] = $row['id'];
 					$_SESSION['rememberMe'] = $_POST['rememberMe'];
 					
 					// Store some data in the session
 					
-					setcookie('tzRemember',$_POST['rememberMe']);
+					if ($set_cookies) {
+						setcookie('tzRemember',$_POST['rememberMe']);
+					}
 				}
 				else $err[]='Wrong username and/or password!';
 			}

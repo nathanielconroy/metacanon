@@ -38,7 +38,13 @@ include 'InitFromGet.php';
 include 'functions2.php';
 include 'valuePersistence.php';
 
-if (isset($_POST['username']))
+
+if ((isset($_POST['user_submit']) && $_POST['user_submit']=='Register'))
+{
+	print 'hi';
+	UserHandling::register();
+}
+else if (isset($_POST['username']))
 {
 	UserHandling::logIn();
 }
