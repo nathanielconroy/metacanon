@@ -2,7 +2,7 @@
 
 class DatabaseAccessor
 {
-	public function getTotalAuthors($queryBuilder)
+	static public function getTotalAuthors($queryBuilder)
 	{
 		$query = $queryBuilder->getTotalAuthorsQuery();
 		$results = DatabaseAccessor::getSQLResults($query);
@@ -10,37 +10,37 @@ class DatabaseAccessor
 		return $row['num'];
 	}
 	
-	public function getTopAuthorsByTotalPoints($queryBuilder)
+	static public function getTopAuthorsByTotalPoints($queryBuilder)
 	{
 		$query = $queryBuilder->getTopAuthorsByTotalPointsQuery();
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getNumberOfBooksByGenre($queryBuilder)
+	static public function getNumberOfBooksByGenre($queryBuilder)
 	{
 		$query = $queryBuilder->getBooksPerGenreQuery($queryBuilder);
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getNumberOfAuthorsByGender($queryBuilder)
+	static public function getNumberOfAuthorsByGender($queryBuilder)
 	{
 		$query = $queryBuilder->getAuthorsPerGenderQuery();
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getNumberOfBooksByGender($queryBuilder)
+	static public function getNumberOfBooksByGender($queryBuilder)
 	{
 		$query = $queryBuilder->getBooksPerGenderQuery();
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getNumberOfBooksPerAuthor($queryBuilder)
+	static public function getNumberOfBooksPerAuthor($queryBuilder)
 	{
 		$query = $queryBuilder->getBooksPerAuthorQuery();
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getSearchResults($searchTerm)
+	static public function getSearchResults($searchTerm)
 	{
 		$searchTerm = str_replace("'","''",$searchTerm);
 		$searchTerm = htmlspecialchars($searchTerm);
@@ -53,7 +53,7 @@ class DatabaseAccessor
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getSearchResultsCount($searchTerm)
+	static public function getSearchResultsCount($searchTerm)
 	{
 		$searchTerm = str_replace("'","''",$searchTerm);
 		$searchTerm = htmlspecialchars($searchTerm);
@@ -63,19 +63,19 @@ class DatabaseAccessor
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getStandardResults($queryBuilder)
+	static public function getStandardResults($queryBuilder)
 	{
 		$query = $queryBuilder->getFictionQuery();
 		return DatabaseAccessor::getSQLResults($query);
 	}
 
-	public function getOneBookPerAuthor($queryBuilder)
+	static public function getOneBookPerAuthor($queryBuilder)
 	{
 		$query = $queryBuilder->getFictionQueryOnePerAuthor();
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
-	public function getFictionCount($queryBuilder)
+	static public function getFictionCount($queryBuilder)
 	{
 		$query = $queryBuilder->getFictionCountQuery();
 		$fictionCountResult = DatabaseAccessor::getSQLResults($query);
@@ -84,7 +84,7 @@ class DatabaseAccessor
 		return $fictionCount;
 	}
 	
-	public function getOnePerAuthFictionCount($queryBuilder)
+	static public function getOnePerAuthFictionCount($queryBuilder)
 	{
 		$query = $queryBuilder->getOnePerAuthCountQuery();
 		$fictionCountResult = DatabaseAccessor::getSQLResults($query);
@@ -100,7 +100,7 @@ class DatabaseAccessor
 		}
 	}
 	
-	public function getBooksForUser()
+	static public function getBooksForUser()
 	{
 		$where = "WHERE Year > 1899 AND Year < 2000 AND nation = 'unitedstates'";
 		
@@ -125,7 +125,7 @@ class DatabaseAccessor
 		return $results;
 	}
 	
-	private function getDatabaseConnection()
+	static private function getDatabaseConnection()
 	{
 		$mysqli = new mysqli("localhost", ADMIN, PASSWORD, DATABASE);
 		if (!$mysqli)
@@ -133,7 +133,7 @@ class DatabaseAccessor
 		return $mysqli;
 	}
 	
-	private function getSQLResults($query)
+	static private function getSQLResults($query)
 	{
 		$mysqli = DatabaseAccessor::getDatabaseConnection();
 		$results = $mysqli->query($query);
