@@ -1,6 +1,6 @@
 <?php
 
-	include '../php/DatabaseAccessor.php';
+	include('../php/DatabaseAccessor.php');
 	include('../php/DatabaseConfig.php');
 	include('../php/FictionQueryBuilder.php');
 	include('../vendor/autoload.php');
