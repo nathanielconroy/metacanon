@@ -2,7 +2,7 @@
 
 class UserHandling
 {
-	static private function GetUsersDatabaseConnection()
+	static public function GetUsersDatabaseConnection()
 	{
 		$mysqli = new mysqli("localhost", ADMIN, PASSWORD, DATABASE);
 		if (!$mysqli)
@@ -10,19 +10,18 @@ class UserHandling
 		return $mysqli;
 	}
 	
-	public function getBooksReadByUser($user)
+	static public function getBooksReadByUser($user)
 	{
-		$mysqli = GetUsersDatabaseConnection();
-		$result = $mysqli->query("SELECT booksread FROM metausers WHERE user = '$user'");
-		return $result;
+		$mysqli = UserHandling::GetUsersDatabaseConnection();
+		$result = $mysqli->query("SELECT booksread FROM metausers WHERE usr = '$user'");
+		return mysqli_fetch_assoc($result)['booksread'];
 	}
 	
-	public function MarkBookAsRead($user,$book_id)
+	static public function MarkBookAsRead($user,$book_id)
 	{
-	    $mysqli = GetUsersDatabaseConnection();
-	    $query = "UPDATE metausers SET booksread = CONCAT(booksread, $book_id) WHERE user = $user";
-	    echo $query;
-	    $result = $mysqli->query($query);
+	    $mysqli = UserHandling::GetUsersDatabaseConnection();
+	    $query = "UPDATE metausers SET booksread = CONCAT(booksread, '$book_id,') WHERE usr = '$user';";
+		$result = $mysqli->query($query);
 	    if ($result)
 	    {
 	        return true;
@@ -33,10 +32,10 @@ class UserHandling
 	    }
 	}
 	
-	public function MarkBookAsUnread($user,$book_id)
+	static public function MarkBookAsUnread($user,$book_id)
 	{
-	    $mysqli = GetUsersDatabaseConnection();
-	    $result = $mysqli->query("UPDATE metausers SET booksread = REPLACE(booksread, $book_id, ',') WHERE user = $user");
+	    $mysqli = UserHandling::GetUsersDatabaseConnection();
+	    $result = $mysqli->query("UPDATE metausers SET booksread = REPLACE(booksread, ',$book_id,', ',') WHERE usr = '$user';");
 	    if ($result)
 	    {
 	        return true;
@@ -47,21 +46,21 @@ class UserHandling
 	    }
 	}
 	
-	public function GetUserPresets($user_id)
+	static public function GetUserPresets($user_id)
 	{
 		$mysqli = GetUsersDatabaseConnection();
 		$result = $mysqli->query("SELECT * FROM metacanonuserpresets WHERE userid='$user_id'");
 		return $result;
 	}
 	
-	public function AddUserPreset($user_id,$user_name,$preset_name,$preset_url)
+	static public function AddUserPreset($user_id,$user_name,$preset_name,$preset_url)
 	{
 	    $mysqli = GetUsersDatabaseConnection();
 	    $query = "INSERT INTO metacanonuserpresets (userid,username,presetname,preseturl) VALUES ('$user_id','$user_name','$preset_name','$preset_url')";
 	    $result = $mysqli->query($query);
 	}
 	
-	public function DeleteUserPreset($preset_id)
+	static public function DeleteUserPreset($preset_id)
 	{
 	    $mysqli = GetUsersDatabaseConnection();
 	    $result = $mysqli->query("DELETE FROM metacanonuserpresets WHERE presetid='$preset_id'");
@@ -101,19 +100,18 @@ class UserHandling
 				$_POST['username'] = mysqli_real_escape_string($mysqli,$_POST['username']);
 				// Escape the input data
 				
-				$query = "	INSERT INTO metausers(usr,pass,email,regIP,dt,booksread)
+				$query = "INSERT INTO metausers(usr,pass,email,regIP,dt,booksread)
 								VALUES(
-								
 									'".$_POST['username']."',
 									'".md5($pass)."',
 									'".$_POST['email']."',
 									'".$ip_address."',
 									NOW() ,
 									','
-									
-								)";
+								);";
 				
 				mysqli_query($mysqli,$query);
+				
 				
 				if(mysqli_affected_rows($mysqli)==1)
 				{
@@ -138,7 +136,7 @@ class UserHandling
 		}	
 	}
 	
-	public function logOff()
+	static public function logOff()
 	{
 		$_SESSION = array();
 		session_destroy();

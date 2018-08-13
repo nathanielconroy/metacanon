@@ -7,24 +7,21 @@
 	class UserHandlingTest extends TestCase
 	{
 		public function testUserRegistration()
-		{
-			$testPassed = true;
-			
+		{	
 			$_POST['user_submit'] = 'Register';
-			$_POST['username'] = 'newUserrrrrrr' . rand(1000,10000);
-			$_POST['password'] = 'stupidPassword' . rand(1000,10000);
+			$_POST['username'] = 'newUserrrrrrr88493848';
+			$_POST['password'] = 'stupidPassword';
 			$_POST['email'] = 'newuseremail@emailplace.com';
 			$_POST['rememberMe'] = true;
 			
 			UserHandling::register();
 			
-			if (isset($_SESSION['msg']['reg-err']))
-			{
-				echo $_SESSION['msg']['reg-err'];
-				$testPassed = false;
-			}
-			
-			$this->assertTrue($testPassed);
+			$this->assertFalse(isset($_SESSION['msg']['reg-err']));
+				
+			// Remove the user that we just created.
+			$mysqli = UserHandling::GetUsersDatabaseConnection();
+			$query = "DELETE FROM metausers WHERE usr = 'newUserrrrrrr88493848'";
+			mysqli_query($mysqli,$query);
 		}
 		
 		public function testUserLogin()
@@ -46,6 +43,16 @@
 			UserHandling::logIn(false);
 			
 			$this->assertTrue($_SESSION['usr'] == "testuser");
+		}
+		
+		public function testMarkBookAsReadUnread()
+		{
+			UserHandling::MarkBookAsRead('testuser','1');
+			$booksRead = UserHandling::getBooksReadByUser('testuser');
+			$this->assertEquals(',1,', $booksRead);
+			UserHandling::MarkBookAsUnread('testuser','1');
+			$booksRead = UserHandling::getBooksReadByUser('testuser');
+			$this->assertEquals(',', $booksRead);
 		}
 	}
 ?>

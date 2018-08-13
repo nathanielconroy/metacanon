@@ -55,9 +55,7 @@ if (isset($_SESSION['usr']))
     $user = $_SESSION['usr'];
 };
 
-$result = UserHandling::getBooksReadByUser($user);
-$booksreadrow = mysqli_fetch_assoc($result);
-$booksread = $booksreadrow['booksread'];
+$booksread = UserHandling::getBooksReadByUser($user);
 
 $queryBuilder = new FictionQueryBuilder(
 	"'unitedstates'",
