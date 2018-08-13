@@ -125,6 +125,11 @@ class DatabaseAccessor
 		return $results;
 	}
 	
+	static public function getGenres()
+	{
+		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM genres;');
+	}
+	
 	static private function getDatabaseConnection()
 	{
 		$mysqli = new mysqli("localhost", ADMIN, PASSWORD, DATABASE);

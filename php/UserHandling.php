@@ -48,22 +48,32 @@ class UserHandling
 	
 	static public function GetUserPresets($user_id)
 	{
-		$mysqli = GetUsersDatabaseConnection();
+		$mysqli = UserHandling::GetUsersDatabaseConnection();
 		$result = $mysqli->query("SELECT * FROM metacanonuserpresets WHERE userid='$user_id'");
 		return $result;
 	}
 	
 	static public function AddUserPreset($user_id,$user_name,$preset_name,$preset_url)
 	{
-	    $mysqli = GetUsersDatabaseConnection();
+	    $mysqli = UserHandling::GetUsersDatabaseConnection();
 	    $query = "INSERT INTO metacanonuserpresets (userid,username,presetname,preseturl) VALUES ('$user_id','$user_name','$preset_name','$preset_url')";
-	    $result = $mysqli->query($query);
+	    $mysqli->query($query);
 	}
 	
 	static public function DeleteUserPreset($preset_id)
 	{
-	    $mysqli = GetUsersDatabaseConnection();
-	    $result = $mysqli->query("DELETE FROM metacanonuserpresets WHERE presetid='$preset_id'");
+	    $mysqli = UserHandling::GetUsersDatabaseConnection();
+	    $mysqli->query("DELETE FROM metacanonuserpresets WHERE presetid='$preset_id'");
+	}
+	
+	static public function getUserLevel($user)
+	{
+		// Nonusers are at level 1 by default.
+		if ($user == 'none') {return 1;}
+		
+		$mysqli = UserHandling::GetUsersDatabaseConnection();
+		$results = $mysqli->query("SELECT level FROM metausers WHERE usr='$user'");
+		return mysqli_fetch_assoc($results)['level'];
 	}
 	
 	static public function register()

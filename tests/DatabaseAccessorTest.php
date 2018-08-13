@@ -71,6 +71,18 @@
 			// Count should be at least 50.
 			$this->assertTrue($count > 50);
 		}
+		
+		public function testGetGenres()
+		{
+			$results = DatabaseAccessor::getGenres();
+			$rowIndex = 0;
+			while ($row = mysqli_fetch_array($results))
+			{
+				$rowIndex++;
+			}
+			
+			$this->assertTrue($rowIndex > 5);
+		}
 	}
 ?>
 

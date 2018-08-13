@@ -34,9 +34,11 @@ require 'functions.php';
 include 'php/FictionQueryBuilder.php';
 include 'php/DatabaseAccessor.php';
 include 'php/DatabaseConfig.php';
+include 'php/HTMLGenerator.php';
 include 'InitFromGet.php';
 include 'functions2.php';
 include 'valuePersistence.php';
+
 
 
 if ((isset($_POST['user_submit']) && $_POST['user_submit']=='Register'))
@@ -56,6 +58,7 @@ if (isset($_SESSION['usr']))
 };
 
 $booksread = UserHandling::getBooksReadByUser($user);
+$user_level = UserHandling::getUserLevel($user);
 
 $queryBuilder = new FictionQueryBuilder(
 	"'unitedstates'",
@@ -74,7 +77,7 @@ $queryBuilder = new FictionQueryBuilder(
 	$langLitWeight,
 	$nbaWeight,
 	$pulitzerWeight,
-	$genres,
+	$included_genres,
 	$faulkner,
 	"all"
 );

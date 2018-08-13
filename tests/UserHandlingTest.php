@@ -54,6 +54,12 @@
 			$booksRead = UserHandling::getBooksReadByUser('testuser');
 			$this->assertEquals(',', $booksRead);
 		}
+		
+		public function testGetUserLevel()
+		{
+			$this->assertEquals(2, UserHandling::getUserLevel('nathan'));
+			$this->assertEquals(1, UserHandling::getUserLevel('testuser'));
+		}
 	}
 ?>
 

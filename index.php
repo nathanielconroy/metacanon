@@ -92,22 +92,10 @@
         </div>
         <hr>
         <div>Include only:</div>
-        <div>
-            <input class="w3-check" type="checkbox" name="novels" value="true" <?php echo $novelscheck ?>>
-            <label class="w3-validate">Novels</label>
-        </div>
-        <div>
-            <input class="w3-check" type="checkbox" name="collections" value="true" <?php echo $collectionscheck ?>>
-            <label class="w3-validate">Collections of Stories</label>
-        </div>
-        <div>
-            <input class="w3-check" type="checkbox" name="novellas" value="true" <?php echo $novellascheck ?>>
-            <label class="w3-validate">Novellas</label>
-        </div>
-        <div>
-            <input class="w3-check" type="checkbox" name="other" value="true" <?php echo $othercheck ?>>
-            <label class="w3-validate">Other</label>
-        </div>
+		<?php
+			$user_level = UserHandling::getUserLevel($user);
+			echo(HTMLGenerator::getGenreMenu($user_level,$genres,$included_genres));
+		?>
         <hr>
         <div style="margin-bottom:15px" align="center">
             <button class="w3-btn" onclick="orderfunction()" style="width:90%">Generate Canon</button>
@@ -264,23 +252,10 @@
 					<hr>
 					<div>
 						<div>Include only:</div>
-						<div>
-							<input class="w3-check" type="checkbox" name="novels" value="yep" <?php echo $novelscheck ?>>
-							<label class="w3-validate">Novels</label>
-						</div>
-						<div>
-							<input class="w3-check" type="checkbox" name="collections" value="yep" <?php echo $collectionscheck ?>>
-							<label class="w3-validate">Collections of Stories</label>
-						</div>
-			
-						<div>
-							<input class="w3-check" type="checkbox" name="novellas" value="yep" <?php echo $novellascheck ?>>
-							<label class="w3-validate">Novellas</label>
-						</div>
-						<div>
-							<input class="w3-check" type="checkbox" name="other" value="yep" <?php echo $othercheck ?>>
-							<label class="w3-validate">Other</label>
-						</div>
+						<?php
+							$user_level = UserHandling::getUserLevel($user);
+							echo(HTMLGenerator::getGenreMenu($user_level,$genres,$included_genres));
+						?>
 					</div>
 					<hr>
 					<div>

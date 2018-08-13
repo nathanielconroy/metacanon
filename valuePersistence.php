@@ -76,8 +76,8 @@ $othercheck = "";
 //have checked values carry over
 if ($oneBookPerAuthor) { $oneauthcheck = "checked" ; }
 if ($authorgender == "female") { $womenonlycheck = "checked" ; }
-if (in_array("novel",$genres)) { $novelscheck = "checked" ; }
-if (in_array("collection",$genres)) { $collectionscheck = "checked" ; }
-if (in_array("novella",$genres)) { $novellascheck = "checked" ; }
-if (in_array("other",$genres)) { $othercheck = "checked" ; }
+if (in_array("novel",$included_genres)) { $novelscheck = "checked" ; }
+if (in_array("collection",$included_genres)) { $collectionscheck = "checked" ; }
+if (in_array("novella",$included_genres)) { $novellascheck = "checked" ; }
+if (in_array("other",$included_genres)) { $othercheck = "checked" ; }
 ?>

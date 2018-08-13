@@ -31,25 +31,24 @@ else
 	$authorgender = "";
 }
 
-//genre filtering
-$genres = [];
-if (isset($_GET["novels"]) && $_GET["novels"] == "true")
-{$genres[] = "novel";}
+$included_genres = [];
+$genres = DatabaseAccessor::getGenres();
 
-if (isset($_GET["collections"]) && $_GET["collections"] == "true")
-{$genres[] = "collection";}
-
-if (isset($_GET["novellas"]) && $_GET["novellas"] == "true")
-{$genres[] = "novella";}
-
-if (isset($_GET["other"]) && $_GET["other"] == "true")
-{$genres[] = "other";}
-
-if (sizeof($genres) == 0)
+while ($genre_row = mysqli_fetch_array($genres))
 {
-	$genres = ["novel","novella","collection","other"];
+	if (isset($_GET[$genre_row['name']]) && $_GET[$genre_row['name']] == 'true')
+	{
+		$included_genres[] = $genre_row['name'];
+	}
 }
-//end genre filtering
+
+// Reset genres object back to first row.
+mysqli_data_seek($genres, 0);
+
+if (sizeof($included_genres) == 0)
+{
+	$included_genres = ["novel","novella","collection","other"];
+}
 
 if (empty($_GET['order'])) {$order = 'newscore';}
 else {$order = htmlspecialchars($_GET["order"]);}
