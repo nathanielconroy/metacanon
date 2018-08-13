@@ -211,7 +211,7 @@ class FictionQueryBuilder{
 			(100*".$this->nonUniqueAuthor.") AS nonuniqueauthor, 
 			(100*".$this->nytCorpusCorrect.") AS corpusfreqnyt, 
 			$calculatedScore AS newscore
-		FROM fiction WHERE $conditions 
+		FROM works WHERE $conditions 
 		GROUP BY ".$this->groupBy." 
 		ORDER BY newscore DESC
 		LIMIT 1500"; // TODO : make this limit a variable.

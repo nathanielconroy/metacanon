@@ -46,7 +46,7 @@ class DatabaseAccessor
 		$searchTerm = htmlspecialchars($searchTerm);
 		$query = "SELECT Author_First_Name, Author, fullname, match( fullname )
 			AGAINST ( '%{$searchTerm}%' IN BOOLEAN MODE ) AS relevance
-			FROM fiction 
+			FROM works 
 			WHERE match( fullname ) AGAINST ( '%{$searchTerm}%' IN BOOLEAN MODE ) 
 			GROUP BY fullname, Author_First_Name, Author
 			ORDER BY relevance DESC";
@@ -58,7 +58,7 @@ class DatabaseAccessor
 		$searchTerm = str_replace("'","''",$searchTerm);
 		$searchTerm = htmlspecialchars($searchTerm);
 		$query = "SELECT COUNT(DISTINCT fullname) as total
-			FROM fiction 
+			FROM works 
 			WHERE match( fullname ) AGAINST ( '%{$searchTerm}%' IN BOOLEAN MODE )";
 		return DatabaseAccessor::getSQLResults($query);
 	}
@@ -117,7 +117,7 @@ class DatabaseAccessor
 		)
 		   
 
-		AS newscore FROM fiction $where) AS a ORDER BY newscore DESC
+		AS newscore FROM works $where) AS a ORDER BY newscore DESC
 
 		"
 		);
