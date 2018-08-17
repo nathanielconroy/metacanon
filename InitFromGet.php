@@ -50,6 +50,26 @@ if (sizeof($included_genres) == 0)
 	$included_genres = ["novel","novella","collection","other"];
 }
 
+
+$included_regions = [];
+$regions = DatabaseAccessor::getRegions();
+
+while ($regions_row = mysqli_fetch_array($regions))
+{
+	if (isset($_GET[$regions_row['name']]) && $_GET[$regions_row['name']] == 'true')
+	{
+		$included_regions[] = $regions_row['name'];
+	}
+}
+
+// Reset regions object back to first row.
+mysqli_data_seek($regions, 0);
+
+if (sizeof($included_regions) == 0)
+{
+	$included_regions = ["unitedstates"];
+}
+
 if (empty($_GET['order'])) {$order = 'newscore';}
 else {$order = htmlspecialchars($_GET["order"]);}
 

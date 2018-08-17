@@ -61,7 +61,7 @@ $booksread = UserHandling::getBooksReadByUser($user);
 $user_level = UserHandling::getUserLevel($user);
 
 $queryBuilder = new FictionQueryBuilder(
-	"'unitedstates'",
+	$included_regions,
 	$yearstart,
 	$yearend,
 	$authorgender,

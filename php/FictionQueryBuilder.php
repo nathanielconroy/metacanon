@@ -5,7 +5,7 @@ use Latitude\QueryBuilder\Conditions;
 class FictionQueryBuilder{
 
 	function __construct(
-		$nation,
+		$regions,
 		$yearStart,
 		$yearEnd,
 		$gender,
@@ -26,7 +26,7 @@ class FictionQueryBuilder{
 		$author
 	)
 	{
-		$this->nation = $nation;
+		$this->regions = $regions;
 		$this->yearStart = $yearStart;
 		$this->yearEnd = $yearEnd;
 		$this->gender = $gender;
@@ -53,18 +53,18 @@ class FictionQueryBuilder{
 		$this->pulitzerWeight = $pulitzerWeight;
 		
 		//set corpus frequency correction
-		$this->corpusCorrect = "(100/(((titlecorpusfreq)/150)+100))";
+		$this->corpusCorrect = "(100/((ifnull(titlecorpusfreq,0)/150)+100))";
 
 		//set non-unique author name correction
-		$this->nonUniqueAuthor = "(100/(((nonuniqueauthor)/25)+100))";
+		$this->nonUniqueAuthor = "(100/((ifnull(nonuniqueauthor,0)/25)+100))";
 
 		//set nyt corpus frequency correction
-		$this->nytCorpusCorrect = "(100/(((corpusfreqnyt)/50)+100))";
+		$this->nytCorpusCorrect = "(100/((ifnull(corpusfreqnyt,0)/50)+100))";
 		
 		// Build points function strings.
 		$correctionString = "*($this->corpusCorrect)*($this->nonUniqueAuthor)";
-		$genericPointsFunction = "((POWER(2 * %s +1, 1/4) -1)/%f)";
-		$correctedPointsFunction = $genericPointsFunction = "((POWER(2 * (%s $correctionString) +1, 1/4) -1)/%f)";
+		$genericPointsFunction = "((POWER(2 * ifnull(%s,0) +1, 1/4) -1)/%f)";
+		$correctedPointsFunction = $genericPointsFunction = "((POWER(2 * (ifnull(%s,0) $correctionString) +1, 1/4) -1)/%f)";
 		
 		$this->googleScholarPointsFunction = sprintf($genericPointsFunction,"googlescholar",.7);
 		$this->jstorPointsFunction = sprintf($correctedPointsFunction,"jstor",1);
@@ -199,7 +199,7 @@ class FictionQueryBuilder{
 		$conditions = $this->getWhereClause();
 		$calculatedScore = $this->getCalculatedScoreString(); 
 		
-		$innerSelect = "SELECT ID, genre, Title, fullname, Author_First_Name, Author, Year, googlescholar, jstorLangLit,
+		$innerSelect = "SELECT ID, genre, Title, fullname, Author_First_Name, Author, Year, googlescholar, jstor, jstorLangLit,
 			americanliterature, alh, pulitzer, nba, nyt, authorgender, ".
 			$this->googleScholarPointsFunction." *(".$this->gsWeight.") AS gsscore, ".
 			$this->jstorPointsFunction." *($this->jstorWeight) AS jstorscore, ".
@@ -235,23 +235,37 @@ class FictionQueryBuilder{
 	
 	private function getWhereClause()
 	{
-		$conditions = Conditions::make("nation = $this->nation")
-			->andWith("Year >= $this->yearStart")
-			->andWith("Year <= $this->yearEnd");
+		$conditions = "Year >= $this->yearStart AND Year <= $this->yearEnd ";
+		
+		// Just include all regions if we haven't designated any regions or if one of the included regions is 'all.'
+		if (!in_array('all',$this->regions) && count($this->regions) > 0)
+		{
+			$region = $this->regions[0];
+			$regionsString = "region = '$region'";
+			if (count($this->regions) > 1)
+			{
+				$region = $this->regions[$i];
+				for ($i = 1; $i < count($this->regions); $i++)
+				{
+					$regionsString .= " OR region = '$region'";
+				}
+			}
+			$conditions .= "AND $regionsString ";
+		}
 		
 		if ($this->gender == "female" OR $this->gender == "male" OR $this->gender == "other")
 		{
-			$conditions->andWith("authorgender = '" .$this->gender. "'");
+			$conditions .= "AND authorgender = '$this->gender' ";
 		}
 		
 		if ($this->author != "all")
 		{
-			$conditions->andWith("fullname = '" .$this->author. "'");
+			$conditions .= "AND fullname = '$this->author' ";
 		}
 		
 		if (!$this->faulkner)
 		{
-			$conditions->andWith("NOT fullname = 'Faulkner, William'");
+			$conditions .= "AND NOT fullname = 'Faulkner, William' ";
 		}
 		
 		// Add genre conditions.	
@@ -265,10 +279,10 @@ class FictionQueryBuilder{
 					$genresString .= " OR genre LIKE '%" .$this->genres[$i]. "%'";
 				}
 			}	
-			$conditions->andWith("($genresString)");
+			$conditions .= "AND ($genresString) ";
 		}
-		
-		return $conditions->sql();
+				
+		return $conditions;
 	}
 }
 ?>

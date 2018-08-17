@@ -93,10 +93,14 @@
         <hr>
         <div>Include only:</div>
 		<?php
-			$user_level = UserHandling::getUserLevel($user);
-			echo(HTMLGenerator::getGenreMenu($user_level,$genres,$included_genres));
+			echo(HTMLGenerator::getDynamicCheckedMenu($user_level,$genres,$included_genres));
 		?>
         <hr>
+		<div></div>
+		<?php
+			echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $regions, $included_regions));
+		?>
+		<hr>
         <div style="margin-bottom:15px" align="center">
             <button class="w3-btn" onclick="orderfunction()" style="width:90%">Generate Canon</button>
         </div>
@@ -254,7 +258,7 @@
 						<div>Include only:</div>
 						<?php
 							$user_level = UserHandling::getUserLevel($user);
-							echo(HTMLGenerator::getGenreMenu($user_level,$genres,$included_genres));
+							echo(HTMLGenerator::getDynamicCheckedMenu($user_level,$genres,$included_genres));
 						?>
 					</div>
 					<hr>

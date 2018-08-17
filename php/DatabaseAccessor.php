@@ -130,6 +130,11 @@ class DatabaseAccessor
 		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM genres;');
 	}
 	
+	static public function getRegions()
+	{
+		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM regions;');
+	}
+	
 	static private function getDatabaseConnection()
 	{
 		$mysqli = new mysqli("localhost", ADMIN, PASSWORD, DATABASE);
