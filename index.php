@@ -257,11 +257,15 @@
 					<div>
 						<div>Include only:</div>
 						<?php
-							$user_level = UserHandling::getUserLevel($user);
 							echo(HTMLGenerator::getDynamicCheckedMenu($user_level,$genres,$included_genres));
 						?>
 					</div>
 					<hr>
+					<div>
+						<?php
+							echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $regions, $included_regions));
+						?>			
+					</div>
 					<div>
 						Include only works published between <input class="w3-border-bottom" type="text" name="yearstart" value="<?php echo $yearstart; ?>" style="border:none;width:32px"> and <input class="w3-border-bottom" type="text" name="yearend" value="<?php echo $yearend; ?>" style="border:none;width:32px">.
 					</div>

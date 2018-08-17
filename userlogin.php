@@ -15,18 +15,24 @@ if (isset($_POST['presetname']))
     $metausername = $_SESSION['usr'];
     $presetname = addslashes($_POST['presetname']);
     
-    $one_per_auth = false;
-    $women_only = false;
-    if (isset($_POST['oneperauth']))
+    if (!isset($_POST['oneperauth']))
     {
-        $one_per_auth = true;
+        $_POST['oneperauth'] = true;
     }
     
-    if (isset($_POST['womenonly']))
+    if (!isset($_POST['womenonly']))
     {
-        $women_only = true;
+        $_POST['womenonly'] = true;
     }
-    $preseturl = 'index.php?totalbooks=' .$_POST['totalbooks']. '&numtitles=' .$_POST['numtitles']. '&order=' .$_POST['order']. '&womenonly=' .$women_only. '&oneperauth=' .$one_per_auth. '&yearstart=' .$_POST['yearstart']. '&yearend=' .$_POST['yearend']. '&gsdata=' .$_POST['gsdata']. '&jstordata=' .$_POST['jstordata']. '&alhdata=' .$_POST['alhdata']. '&aldata=' .$_POST['aldata']. '&pdata=' .$_POST['pdata']. '&nbadata=' .$_POST['nbadata']. '&nytdata=' .$_POST['nytdata']. '&startnumber=' .$_POST['startnumber']. '&faulkner=' .$_POST['faulkner'] ;
+	
+	
+	
+	$preset_parameters = ['totalbooks','numtitles', 'order', 'yearstart', 'yearend', 'gsdata', 'jstordata', 'alhdata', 'aldata', 'pdata', 'nbadata', 'nytdata', 'startnumber', 'faulkner'];
+	$preset_parameters = array_merge($preset_parameters, DatabaseAccessor::getGenresList());
+	$preset_parameters = array_merge($preset_parameters, DatabaseAccessor::getRegionsList());
+	
+	
+    $preseturl = HTMLGenerator::generatePresetURL($_POST, $preset_parameters);
     
     UserHandling::AddUserPreset($userid,$metausername,$presetname,$preseturl);
 }

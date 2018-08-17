@@ -17,5 +17,23 @@ class HTMLGenerator {
 		mysqli_data_seek($sqlResults, 0);
 		return $output;
 	}
+	
+	static public function generatePresetUrl($parameters_post, $preset_parameters)
+	{
+		$url = 'index.php?';
+		for ($i = 0; $i < count($preset_parameters); $i++)
+		{
+			$param = $preset_parameters[$i];
+			if (isset($parameters_post[$param]))
+			{
+				$url .= "$param=$parameters_post[$param]";
+				if ($i < count($preset_parameters) - 1) 
+				{	
+					$url .= '&';
+				}
+			}
+		}
+		return $url;
+	}
 }
 ?>

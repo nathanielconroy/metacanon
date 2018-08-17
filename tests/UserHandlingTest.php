@@ -60,6 +60,40 @@
 			$this->assertEquals(2, UserHandling::getUserLevel('nathan'));
 			$this->assertEquals(1, UserHandling::getUserLevel('testuser'));
 		}
+		
+		public function testUserPresets()
+		{
+			UserHandling::AddUserPreset(33, "testuser", "testpreset1", 
+			"index.php?totalbooks=500&numtitles=100&order=score&womenonly=&oneperauth=&yearstart=1900&yearend=1999&gsdata=1&jstordata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&faulkner=yes");
+			UserHandling::AddUserPreset(33, "testuser", "testpreset2", 
+			"index.php?totalbooks=500&numtitles=100&order=score&womenonly=&oneperauth=&yearstart=1900&yearend=1999&gsdata=1&jstordata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&faulkner=yes");
+			
+			$results = UserHandling::GetUserPresets(33);
+			$num_rows = 0;
+			$found_first_preset = false;
+			$ids_to_delete = [];
+			while ($row = $results->fetch_array())
+			{
+				if ($row['presetname'] == "testpreset1") {$found_first_preset = true;}
+				$num_rows++;
+				$ids_to_delete[] = $row['presetid'];
+			}
+			$this->assertTrue($num_rows > 1);
+			$this->assertTrue($found_first_preset);
+			
+			foreach ($ids_to_delete as $id)
+			{
+				UserHandling::DeleteUserPreset($id);
+			}
+			
+			$num_rows = 0;
+			$results = UserHandling::GetUserPresets('testuser');
+			while ($row = $results->fetch_array())
+			{
+				$num_rows++;
+			}
+			$this->assertTrue($num_rows == 0);
+		}
 	}
 ?>
 

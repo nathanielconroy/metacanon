@@ -102,7 +102,7 @@ class DatabaseAccessor
 	
 	static public function getBooksForUser()
 	{
-		$where = "WHERE Year > 1899 AND Year < 2000 AND nation = 'unitedstates'";
+		$where = "WHERE Year > 1899 AND Year < 2000 AND region = 'unitedstates'";
 		
 		$results = DatabaseAccessor::getSQLResults("SELECT ID, newscore, authorgender FROM (
 
@@ -125,14 +125,33 @@ class DatabaseAccessor
 		return $results;
 	}
 	
+	static private function getColumnAsArray($results, $column_name)
+	{
+		$values = [];
+		while ($row = $results->fetch_assoc()) {
+			$values[] = $row[$column_name];
+		}
+		return $values;
+	}
+	
 	static public function getGenres()
 	{
 		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM genres;');
 	}
 	
+	static public function getGenresList()
+	{
+		return DatabaseAccessor::getColumnAsArray(DatabaseAccessor::getSQLResults('SELECT name FROM genres;'),'name');
+	}
+	
 	static public function getRegions()
 	{
 		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM regions;');
+	}
+	
+	static public function getRegionsList()
+	{
+		return DatabaseAccessor::getColumnAsArray(DatabaseAccessor::getSQLResults('SELECT name FROM regions;'),'name');
 	}
 	
 	static private function getDatabaseConnection()
