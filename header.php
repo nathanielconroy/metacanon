@@ -60,6 +60,8 @@ if (isset($_SESSION['usr']))
 $booksread = UserHandling::getBooksReadByUser($user);
 $user_level = UserHandling::getUserLevel($user);
 
+if (!isset($author)) {$author = 'all';}
+
 $queryBuilder = new FictionQueryBuilder(
 	$included_regions,
 	$yearstart,
@@ -79,7 +81,7 @@ $queryBuilder = new FictionQueryBuilder(
 	$pulitzerWeight,
 	$included_genres,
 	$faulkner,
-	"all",
+	$author,
 	$included_tags
 );
 

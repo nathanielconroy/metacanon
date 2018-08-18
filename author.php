@@ -14,7 +14,6 @@ $author = str_replace("'","''",$authorpageshort);
 
 <?php include 'header.php'; 
 $results = DatabaseAccessor::GetStandardResults($queryBuilder);
-$row = mysqli_fetch_array($results)
 ?>
 
 <div class="w3-col l12 s12" style="padding-right:8px;padding-left:8px">
