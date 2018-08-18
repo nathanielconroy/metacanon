@@ -34,7 +34,7 @@
 	
 	if ($rowcolor % 2 == 0) {print ' style="background-color: #eeeeee;"';}
 	echo '><td>'.$relativerank. '</td><td>'; 
-	if ( /* strpos($booksread,"," .$row['ID']. ",") !== */ false )  {print '<span id="mmark' .$row['ID']. '" onclick="markasunread(' .$row['ID']. ')" class="w3-tooltip" style="cursor:pointer">&#x1f453;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as unread.</span></span></td><td style="cursor:pointer"';}
+	if ( strpos($booksread,"," .$row['ID']. ",") !== false )  {print '<span id="mmark' .$row['ID']. '" onclick="markasunread(' .$row['ID']. ')" class="w3-tooltip" style="cursor:pointer">&#x1f453;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as unread.</span></span></td><td style="cursor:pointer"';}
 	else {echo '<span href="#" id="mmark' .$row['ID']. '" ';
 	  if (!$id) {echo 'onclick="document.getElementById(\'modal1\').style.display=\'block\'"';}
 	  else {echo 'onclick="markasread(' .$row['ID']. ')"';}
