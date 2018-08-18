@@ -3,6 +3,7 @@ class HTMLGenerator {
 	static public function getDynamicCheckedMenu($user_level, $sqlResults, $checked_names)
 	{
 		$output = '';
+		if (is_string($sqlResults)) {print($sqlResults);}
 		while ($row = mysqli_fetch_array($sqlResults))
 		{
 			if ($user_level < $row['access_level']) {continue;}

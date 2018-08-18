@@ -70,17 +70,25 @@ if (sizeof($included_regions) == 0)
 	$included_regions = ["unitedstates"];
 }
 
+
+// Get included tags.
+$included_tags = [];
+$tags = DatabaseAccessor::getTags();
+
+while ($row = mysqli_fetch_array($tags))
+{
+	if (isset($_GET[$row['name']]) && $_GET[$row['name']]  == 'true')
+	{
+		$included_tags[] = $row['name'];
+	}
+}
+mysqli_data_seek($tags, 0);
+
+
+
 if (empty($_GET['order'])) {$order = 'newscore';}
 else {$order = htmlspecialchars($_GET["order"]);}
 
-//get the tag variable
-if (empty($_GET["tags"]))
-{
-$tags = "none";
-}
-else{
-$tags = $_GET["tags"] ;
-}
 
 if (empty($_GET["yearstart"]))
 {$yearstart = "1900";}

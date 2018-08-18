@@ -79,7 +79,8 @@ $queryBuilder = new FictionQueryBuilder(
 	$pulitzerWeight,
 	$included_genres,
 	$faulkner,
-	"all"
+	"all",
+	$included_tags
 );
 
 if (!$oneBookPerAuthor)

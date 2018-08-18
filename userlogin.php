@@ -30,6 +30,7 @@ if (isset($_POST['presetname']))
 	$preset_parameters = ['totalbooks','numtitles', 'order', 'yearstart', 'yearend', 'gsdata', 'jstordata', 'alhdata', 'aldata', 'pdata', 'nbadata', 'nytdata', 'langlitdata', 'startnumber', 'faulkner'];
 	$preset_parameters = array_merge($preset_parameters, DatabaseAccessor::getGenresList());
 	$preset_parameters = array_merge($preset_parameters, DatabaseAccessor::getRegionsList());
+	$preset_parameters = array_merge($preset_parameters, DatabaseAccessor::getTagsList());
 	
 	
     $preseturl = HTMLGenerator::generatePresetURL($_POST, $preset_parameters);

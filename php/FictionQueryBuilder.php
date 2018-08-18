@@ -23,7 +23,8 @@ class FictionQueryBuilder{
 		$pulitzerWeight,
 		$genres,
 		$faulkner,
-		$author
+		$author,
+		$tags
 	)
 	{
 		$this->regions = $regions;
@@ -76,6 +77,7 @@ class FictionQueryBuilder{
 		$this->genres = $genres;
 		$this->faulkner = $faulkner;
 		$this->author = $author;
+		$this->tags = $tags;
 	}
 	
 	public function getAuthorsPerGenderQuery()
@@ -280,6 +282,19 @@ class FictionQueryBuilder{
 				}
 			}	
 			$conditions .= "AND ($genresString) ";
+		}
+		
+		if (count($this->tags) > 0)
+		{
+			$tagsString = "tags LIKE '%" .$this->tags[0]. "%'";
+			if (count($this->tags) > 1)
+			{
+				for ($i = 1; $i < count($this->tags); $i++)
+				{
+					$tagsString .= " OR tags LIKE '%" .$this->tags[$i]. "%'";
+				}
+			}
+			$conditions .= "AND ($tagsString) ";
 		}
 				
 		return $conditions;

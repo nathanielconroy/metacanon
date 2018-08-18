@@ -93,12 +93,17 @@
         <hr>
         <div>Include only:</div>
 		<?php
-			echo(HTMLGenerator::getDynamicCheckedMenu($user_level,$genres,$included_genres));
+			echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $genres,$included_genres));
 		?>
         <hr>
 		<div></div>
 		<?php
 			echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $regions, $included_regions));
+		?>
+		<hr>
+		<div>Tags:</div>
+		<?php
+			echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $tags, $included_tags));
 		?>
 		<hr>
         <div style="margin-bottom:15px" align="center">
@@ -265,6 +270,13 @@
 						<?php
 							echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $regions, $included_regions));
 						?>			
+					</div>
+					<hr>
+					<div>Tags:</div>
+					<div>
+						<?php
+							echo(HTMLGenerator::getDynamicCheckedMenu($user_level, $tags, $included_tags));
+						?>
 					</div>
 					<div>
 						Include only works published between <input class="w3-border-bottom" type="text" name="yearstart" value="<?php echo $yearstart; ?>" style="border:none;width:32px"> and <input class="w3-border-bottom" type="text" name="yearend" value="<?php echo $yearend; ?>" style="border:none;width:32px">.

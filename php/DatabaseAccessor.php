@@ -134,6 +134,16 @@ class DatabaseAccessor
 		return $values;
 	}
 	
+	static public function getTags()
+	{
+		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM tags;');
+	}
+	
+	static public function getTagsList()
+	{
+		return DatabaseAccessor::getColumnAsArray(DatabaseAccessor::getSQLResults('SELECT name FROM tags;'),'name');
+	}
+	
 	static public function getGenres()
 	{
 		return DatabaseAccessor::getSQLResults('SELECT name, human_readable_name, access_level FROM genres;');
