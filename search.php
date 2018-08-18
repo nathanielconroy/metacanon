@@ -5,9 +5,8 @@
 <link rel="stylesheet" href="css/style.css">
 
 <?php
-include 'vendor/autoload.php';
-include 'php/DatabaseConfig.php';
-include 'php/DatabaseAccessor.php';
+
+include 'header.php';
 
 //get search terms
 $searchTerm = $_GET["search"];
@@ -18,7 +17,6 @@ $count = mysqli_fetch_assoc($countResults);
 ?>
 
 <body>
-<?php include 'header.php'; ?>
 
 <div style="padding:8px">
   <div class="w3-container w3-border w3-card-2" style="min-height:344px;margin-bottom:8px">
