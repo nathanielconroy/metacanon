@@ -190,7 +190,7 @@ class FictionQueryBuilder{
 		$innerCondition = Conditions::make("a.fullname = b.fullname")
 		->andWith("a.newscore = b.maxScore")
 		->andWith("a.newscore != 0")->sql();
-		$innerSelect = $this->getInnerSelect($defaultLimit);
+		$innerSelect = $this->getInnerSelect($this->defaultLimit);
 		$innerJoin = "SELECT fullname, MAX(newscore) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
 		$select = "SELECT COUNT('fullname') as total FROM ($innerSelect) AS a 
 			INNER JOIN ($innerJoin) AS b ON $innerCondition 
