@@ -56,7 +56,7 @@ if (isset($_POST['deleteid']))
 		<form class="clearfix" action="userlogin.php" method="post">
 		<h1>Login</h1>
 		  <?php
-			if(isset($_SESSION['msg']) && $_SESSION['msg']['login-err'])
+			if(isset($_SESSION['msg']) && isset($_SESSION['msg']['login-err']))
 			{echo '<div class="err">'.$_SESSION['msg']['login-err'].'</div>';
 			unset($_SESSION['msg']['login-err']);}
 		  ?>

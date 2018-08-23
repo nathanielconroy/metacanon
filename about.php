@@ -68,8 +68,6 @@ places <i>Invisible Man </i>at number 2 on the list, just below <i>Beloved </i>(
 
 <p>However, you can also use the custom menu on the left hand side of the home page to alter this algorithm, either by changing the weight accorded to any of these sources, or by adding in data from other sources (for example, the <i>New York Times</i> archive). In doing so, you will change the score each work receives as well as the general order of the list. You can then save your newly altered algorith as a custom preset.</p>
 
-<p>Click <a href="http://metacanon.org/blog/uncategorized/the-metacanon-algorithm-explained/" target="_blank">(here)</a> for a more detailed explanation of the Metacanon algorithm.</p>
-
 <h2>How does Metacanon define &quot;fiction&quot;?</h2>
 
 <p>For the purposes of this project "fiction" refers to novels, collections of short stories, novellas, and any other work of book-length prose commonly designated as fiction. Individual short stories are not included. </p>
