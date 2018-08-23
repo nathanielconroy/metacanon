@@ -115,11 +115,11 @@ document.getElementById("mmark" + a).style.color = "#dddddd";
 $.post("markasread.php",{markasunread: a},function(data, status){
 		// Uncomment the alert to get feedback:
 		// alert("Data: " + data + "\nStatus: " + status);
-		document.getElementById("mark" + a).innerHTML = '&#9661;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span>';
+		document.getElementById("mark" + a).innerHTML = '&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span>';
 		document.getElementById("mark" + a).style.color = "#dddddd";
 		document.getElementById("mark" + a).onclick = function(){markasread(a);};
 		
-		document.getElementById("mmark" + a).innerHTML = '&#9661;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span>';
+		document.getElementById("mmark" + a).innerHTML = '&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span>';
 		document.getElementById("mmark" + a).style.color = "#dddddd";
 		document.getElementById("mmark" + a).onclick = function(){markasread(a);};
     });

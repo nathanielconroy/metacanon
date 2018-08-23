@@ -38,7 +38,7 @@
 	else {echo '<span href="#" id="mmark' .$row['ID']. '" ';
 	  if (!$id) {echo 'onclick="document.getElementById(\'modal1\').style.display=\'block\'"';}
 	  else {echo 'onclick="markasread(' .$row['ID']. ')"';}
-	  echo ' style="color:#dddddd;cursor:pointer" class="w3-tooltip">&#9661;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span></span></td><td style="cursor:pointer"';}
+	  echo ' style="color:#dddddd;cursor:pointer" class="w3-tooltip">&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span></span></td><td style="cursor:pointer"';}
 	echo ' id="row' . $id . 'm"><strong>';    
 	if ($row["genre"] == 'article'){echo '"';}
 	else {echo '<i>';}
