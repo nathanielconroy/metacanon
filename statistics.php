@@ -15,14 +15,13 @@ $booksPerGenre = DatabaseAccessor::getNumberOfBooksByGenre($queryBuilder);
 $pointsresult = DatabaseAccessor::getTopAuthorsByTotalPoints($queryBuilder);
 
 $totalAuthors = DatabaseAccessor::getTotalAuthors($queryBuilder);
-$totalBooks = DatabaseAccessor::getFictionCount($queryBuilder);
 ?>
 
 <div>
 	<div class="w3-third" style="padding:8px">
 		<div class="w3-container w3-border w3-card-2">
 		<p>The following statstics are drawn from the top 500 books in the standard metacanon list of twentieth century American fiction.</p>
-		<p>Statistics for custom canons will become available with the next update (metacanon 0.8).</p>
+		<p>Statistics for custom canons will become available in a future update.</p>
 		</div>
 		<div class="w3-container w3-border w3-card-2" style="margin-top:16px">
 
@@ -32,7 +31,7 @@ $totalBooks = DatabaseAccessor::getFictionCount($queryBuilder);
 		while ( $row = mysqli_fetch_array($booksPerGender) ) 
 		{
 			echo ($row["authorgender"]. ': ' .$row["num"]. " (" 
-			.number_format(($row["num"]/$totalBooks)*100,2). "%)<br>");
+			.number_format(($row["num"]/$totalbooks)*100,2). "%)<br>");
 		}
 		?>
 		<hr>
@@ -73,10 +72,10 @@ $totalBooks = DatabaseAccessor::getFictionCount($queryBuilder);
 			}
 			else 
 			{
-				echo ($genre . ': ' .$row["num"] . ' (' . number_format(($row["num"]/$totalBooks)*100,2) . '%)<br>');
+				echo ($genre . ': ' .$row["num"] . ' (' . number_format(($row["num"]/$totalbooks)*100,2) . '%)<br>');
 			}
 		}
-		echo "Mixed Genre: " .($mixedGenre). ' (' . number_format(($mixedGenre/$totalBooks)*100,2) . '%)<br>';
+		echo "Mixed Genre: " .($mixedGenre). ' (' . number_format(($mixedGenre/$totalbooks)*100,2) . '%)<br>';
 		?>
 		<hr>
 		</div>

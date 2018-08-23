@@ -78,11 +78,14 @@ class FictionQueryBuilder{
 		$this->faulkner = $faulkner;
 		$this->author = $author;
 		$this->tags = $tags;
+		
+		$this->statisticsLimit = 500;
+		$this->defaultLimit = 5000;
 	}
 	
 	public function getAuthorsPerGenderQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
 		$query = "SELECT authorgender, COUNT(DISTINCT authorgender, fullname ) AS num 
 			FROM ($innerSelect) AS a
 			GROUP BY authorgender
@@ -93,7 +96,7 @@ class FictionQueryBuilder{
 	
 	public function getTotalAuthorsQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
 		$limit = $this->limit;
 		$query = "SELECT COUNT(DISTINCT fullname) AS num 
 			FROM ($innerSelect) AS a
@@ -104,7 +107,7 @@ class FictionQueryBuilder{
 	
 	public function getBooksPerGenderQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
 		$query = "SELECT authorgender, COUNT( authorgender ) AS num
 			FROM ($innerSelect) AS a
 			GROUP BY authorgender
@@ -115,7 +118,7 @@ class FictionQueryBuilder{
 	
 	public function getBooksPerAuthorQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
 		$query = "SELECT Author, Author_First_Name, COUNT( fullname ) AS 'num'
 			FROM ($innerSelect) AS a
 			GROUP BY Author, Author_First_Name, fullname
@@ -126,7 +129,7 @@ class FictionQueryBuilder{
 	
 	public function getBooksPerGenreQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
 		$query = "SELECT genre, COUNT(genre) AS 'num' 
 			FROM ($innerSelect) AS a
 			GROUP BY genre
@@ -137,7 +140,7 @@ class FictionQueryBuilder{
 	
 	public function getTopAuthorsByTotalPointsQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
 		$query = "SELECT Author, Author_First_Name, fullname, SUM(newscore) AS totalscore
 			FROM ($innerSelect) AS a             
 			GROUP BY fullname, Author, Author_First_Name 
@@ -151,7 +154,7 @@ class FictionQueryBuilder{
 		$innerCondition = Conditions::make("a.fullname = b.fullname")
 		->andWith("a.newscore = b.maxScore")
 		->andWith("a.newscore != 0")->sql();
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->defaultLimit);
 		$innerJoin = "SELECT fullname, MAX(newscore) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
 		$select = "SELECT * FROM ($innerSelect) AS a 
 			INNER JOIN ($innerJoin) AS b ON $innerCondition 
@@ -163,7 +166,7 @@ class FictionQueryBuilder{
 	
 	public function getFictionQuery()
 	{
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->defaultLimit);
 		
 		$select = "SELECT *
 		FROM ($innerSelect) as a  
@@ -178,7 +181,7 @@ class FictionQueryBuilder{
 	{
 		$conditions = $this->getWhereClause();
 		$calculatedScore = $this->getCalculatedScoreString();
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($this->defaultLimit);
 		return "SELECT COUNT('ID') as total FROM ($innerSelect) as a";
 	}
 	
@@ -187,7 +190,7 @@ class FictionQueryBuilder{
 		$innerCondition = Conditions::make("a.fullname = b.fullname")
 		->andWith("a.newscore = b.maxScore")
 		->andWith("a.newscore != 0")->sql();
-		$innerSelect = $this->getInnerSelect();
+		$innerSelect = $this->getInnerSelect($defaultLimit);
 		$innerJoin = "SELECT fullname, MAX(newscore) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
 		$select = "SELECT COUNT('fullname') as total FROM ($innerSelect) AS a 
 			INNER JOIN ($innerJoin) AS b ON $innerCondition 
@@ -196,7 +199,7 @@ class FictionQueryBuilder{
 		return $select;
 	}
 	
-	private function getInnerSelect()
+	private function getInnerSelect($limit)
 	{
 		$conditions = $this->getWhereClause();
 		$calculatedScore = $this->getCalculatedScoreString(); 
@@ -216,7 +219,7 @@ class FictionQueryBuilder{
 		FROM works WHERE $conditions 
 		GROUP BY ".$this->groupBy." 
 		ORDER BY newscore DESC
-		LIMIT 1500"; // TODO : make this limit a variable.
+		LIMIT $limit"; // TODO : make this limit a variable.
 		
 		return $innerSelect;
 	}
