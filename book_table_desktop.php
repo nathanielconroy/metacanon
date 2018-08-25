@@ -67,7 +67,7 @@
 		doublecross();
 		
 		echo '</td></tr>';
-		echo '<tr id="hiddenrow' . $hiddenrow. '">';
+		echo '<tr id="hiddenrow' . $hiddenrow. '" hidden>';
 		echo '<td colspan="2"></td><td colspan="4"><b>Genre</b>: ' .$genre. '<br><br>';
 		
 		include 'scoreinfobox.php';

@@ -49,7 +49,7 @@
 	asterisk();
 	cross();
 	doublecross();
-	echo '</td></tr><tr id="hiddenrow' . $hiddenrow. 'm">';
+	echo '</td></tr><tr id="hiddenrow' . $hiddenrow. 'm" hidden>';
 	echo '<td colspan="2"></td><td colspan="2"><b>Genre</b>: ' .$genre. '<br><br>';
 	include 'scoreinfobox.php';
 	
