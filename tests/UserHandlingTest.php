@@ -7,7 +7,9 @@
 	class UserHandlingTest extends TestCase
 	{
 		public function testUserRegistration()
-		{	
+		{
+			$_SESSION['msg'] = null;
+			
 			$_POST['user_submit'] = 'Register';
 			$_POST['username'] = 'newUserrrrrrr88493848';
 			$_POST['password'] = 'stupidPassword';
@@ -16,11 +18,12 @@
 			
 			UserHandling::register();
 			
+			if (isset($_SESSION['msg']['reg-err'])) { echo $_SESSION['msg']['reg-err']; }
 			$this->assertFalse(isset($_SESSION['msg']['reg-err']));
-				
+			
 			// Remove the user that we just created.
 			$mysqli = UserHandling::GetUsersDatabaseConnection();
-			$query = "DELETE FROM metausers WHERE usr = 'newUserrrrrrr88493848'";
+			$query = "DELETE FROM users WHERE user_name = 'newUserrrrrrr88493848'";
 			mysqli_query($mysqli,$query);
 		}
 		
@@ -47,12 +50,12 @@
 		
 		public function testMarkBookAsReadUnread()
 		{
-			UserHandling::MarkBookAsRead('testuser','1');
-			$booksRead = UserHandling::getBooksReadByUser('testuser');
-			$this->assertEquals(',1,', $booksRead);
-			UserHandling::MarkBookAsUnread('testuser','1');
-			$booksRead = UserHandling::getBooksReadByUser('testuser');
-			$this->assertEquals(',', $booksRead);
+			UserHandling::SetBookStatus(33,1,'read');
+			$booksRead = UserHandling::getUserWorksWithStatus(33,'read');
+			$this->assertEquals([1], $booksRead);
+			UserHandling::SetBookStatus(33,1,'unread');
+			$booksRead = UserHandling::getUserWorksWithStatus(33,'read');
+			$this->assertEquals([], $booksRead);
 		}
 		
 		public function testGetUserLevel()
@@ -74,9 +77,9 @@
 			$ids_to_delete = [];
 			while ($row = $results->fetch_array())
 			{
-				if ($row['presetname'] == "testpreset1") {$found_first_preset = true;}
+				if ($row['preset_name'] == "testpreset1") {$found_first_preset = true;}
 				$num_rows++;
-				$ids_to_delete[] = $row['presetid'];
+				$ids_to_delete[] = $row['preset_id'];
 			}
 			$this->assertTrue($num_rows > 1);
 			$this->assertTrue($found_first_preset);

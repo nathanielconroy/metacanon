@@ -8,14 +8,9 @@ include 'php/UserHandling.php';
 include 'connect.php';
 
 
-if (isset($_POST["markread"]))
+if (isset($_POST["work_id"]))
 {
-    UserHandling::MarkBookAsRead($_SESSION['usr'],$_POST['markread']);
-}
-
-if (isset($_POST["markasunread"]))
-{
-    UserHandling::MarkBookAsUnread($_SESSION['usr'],$_POST['markasunread']);
+    UserHandling::setBookStatus($_SESSION['user_id'],$_POST['work_id'], $_POST['work_status']);
 }
 
 ?>

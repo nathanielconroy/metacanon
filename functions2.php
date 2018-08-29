@@ -51,23 +51,15 @@ function SelectDataPointWeight($displayName,$dataPoint,$selection,$style){
 	';
 }
 
-function WeightSelectionModule($style){
-    global $gsWeight;
-    global $langLitWeight;
-    global $alhWeight;
-    global $alWeight;
-    global $pulitzerWeight;
-    global $nbaWeight;
-    global $nytWeight;
-    global $jstorWeight;
-    SelectDataPointWeight("Google Scholar","gsdata",$gsWeight,$style);
-    SelectDataPointWeight("JSTOR (Language and Literature)","langlitdata",$langLitWeight,$style);
-    SelectDataPointWeight("American Literary History","alhdata",$alhWeight,$style);
-    SelectDataPointWeight("American Literature","aldata",$alWeight,$style);
-    SelectDataPointWeight("Pulitzer Prize","pdata",$pulitzerWeight,$style);
-    SelectDataPointWeight("National Book Award","nbadata",$nbaWeight,$style);
-    SelectDataPointWeight("New York Times Archive","nytdata",$nytWeight,$style);
-    SelectDataPointWeight("JSTOR (Complete)","jstordata",$jstorWeight,$style);
+function WeightSelectionModule($style, $weights){
+    SelectDataPointWeight("Google Scholar","gsdata",$weights['google_scholar'],$style);
+    SelectDataPointWeight("JSTOR (Language and Literature)","langlitdata",$weights['jstor_lang_lit'],$style);
+    SelectDataPointWeight("American Literary History","alhdata",$weights['alh'],$style);
+    SelectDataPointWeight("American Literature","aldata",$weights['american_literature'],$style);
+    SelectDataPointWeight("Pulitzer Prize","pdata",$weights['pulitzer'],$style);
+    SelectDataPointWeight("National Book Award","nbadata",$weights['nba'],$style);
+    SelectDataPointWeight("New York Times Archive","nytdata",$weights['nyt'],$style);
+    SelectDataPointWeight("JSTOR (Complete)","jstordata",$weights['jstor'],$style);
 }
 ?>
 

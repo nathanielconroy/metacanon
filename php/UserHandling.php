@@ -10,70 +10,70 @@ class UserHandling
 		return $mysqli;
 	}
 	
-	static public function getBooksReadByUser($user)
+	static public function getUserWorksWithStatus($user_id, $status)
 	{
 		$mysqli = UserHandling::GetUsersDatabaseConnection();
-		$result = $mysqli->query("SELECT booksread FROM metausers WHERE usr = '$user'");
-		return mysqli_fetch_assoc($result)['booksread'];
+		$result = $mysqli->query("SELECT work_id FROM works_read_per_user WHERE user_id = $user_id and status = '$status'");
+		$booksRead = [];
+		
+		if ($result)
+		{
+			while ($row = mysqli_fetch_assoc($result))
+			{
+				$booksRead[] = $row['work_id'];
+			}
+		}
+		return $booksRead;
 	}
 	
-	static public function MarkBookAsRead($user,$book_id)
+	static public function getBooksReadByUser($user_id)
 	{
-	    $mysqli = UserHandling::GetUsersDatabaseConnection();
-	    $query = "UPDATE metausers SET booksread = CONCAT(booksread, '$book_id,') WHERE usr = '$user';";
+		return UserHandling::getUserWorksWithStatus($user_id, 'read');
+	}
+	
+	static public function setBookStatus($user_id, $work_id, $status)
+	{
+		$mysqli = UserHandling::GetUsersDatabaseConnection();
+		$query = "INSERT INTO works_read_per_user (user_id, work_id, status) VALUES ($user_id, $work_id, '$status') ON DUPLICATE KEY UPDATE status = VALUES(status);";
 		$result = $mysqli->query($query);
-	    if ($result)
-	    {
-	        return true;
-	    }
-	    else
-	    {
-	        return false;
-	    }
-	}
-	
-	static public function MarkBookAsUnread($user,$book_id)
-	{
-	    $mysqli = UserHandling::GetUsersDatabaseConnection();
-	    $result = $mysqli->query("UPDATE metausers SET booksread = REPLACE(booksread, ',$book_id,', ',') WHERE usr = '$user';");
-	    if ($result)
-	    {
-	        return true;
-	    }
-	    else
-	    {
-	        return false;
-	    }
+		if ($result)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	static public function GetUserPresets($user_id)
 	{
 		$mysqli = UserHandling::GetUsersDatabaseConnection();
-		$result = $mysqli->query("SELECT * FROM metacanonuserpresets WHERE userid='$user_id'");
+		$result = $mysqli->query("SELECT * FROM user_presets WHERE user_id='$user_id'");
 		return $result;
 	}
 	
 	static public function AddUserPreset($user_id,$user_name,$preset_name,$preset_url)
 	{
 	    $mysqli = UserHandling::GetUsersDatabaseConnection();
-	    $query = "INSERT INTO metacanonuserpresets (userid,username,presetname,preseturl) VALUES ('$user_id','$user_name','$preset_name','$preset_url')";
+	    $query = "INSERT INTO user_presets (user_id,user_name,preset_name,preset_url) VALUES ('$user_id','$user_name','$preset_name','$preset_url')";
 	    $mysqli->query($query);
 	}
 	
 	static public function DeleteUserPreset($preset_id)
 	{
 	    $mysqli = UserHandling::GetUsersDatabaseConnection();
-	    $mysqli->query("DELETE FROM metacanonuserpresets WHERE presetid='$preset_id'");
+	    $mysqli->query("DELETE FROM user_presets WHERE preset_id='$preset_id'");
 	}
 	
-	static public function getUserLevel($user)
+	static public function getUserLevel($user_name)
 	{
 		// Nonusers are at level 1 by default.
-		if ($user == 'none') {return 1;}
+		if ($user_name == 'none') {return 1;}
 		
 		$mysqli = UserHandling::GetUsersDatabaseConnection();
-		$results = $mysqli->query("SELECT level FROM metausers WHERE usr='$user'");
-		return mysqli_fetch_assoc($results)['level'];
+		$results = $mysqli->query("SELECT access_level FROM users WHERE user_name='$user_name'");
+		return mysqli_fetch_assoc($results)['access_level'];
 	}
 	
 	static public function register()
@@ -110,14 +110,13 @@ class UserHandling
 				$_POST['username'] = mysqli_real_escape_string($mysqli,$_POST['username']);
 				// Escape the input data
 				
-				$query = "INSERT INTO metausers(usr,pass,email,regIP,dt,booksread)
+				$query = "INSERT INTO users(user_name,password,email,ip_address,active_since)
 								VALUES(
 									'".$_POST['username']."',
 									'".md5($pass)."',
 									'".$_POST['email']."',
 									'".$ip_address."',
-									NOW() ,
-									','
+									NOW()
 								);";
 				
 				mysqli_query($mysqli,$query);
@@ -188,16 +187,16 @@ class UserHandling
 				
 				// Escaping all input data
 				
-				$results = mysqli_query($mysqli,"SELECT id,usr FROM metausers WHERE usr='{$_POST['username']}' OR email='{$_POST['username']}' AND pass='".md5($_POST['password'])."'");
+				$results = mysqli_query($mysqli,"SELECT user_id,user_name FROM users WHERE user_name='{$_POST['username']}' OR email='{$_POST['username']}' AND password='".md5($_POST['password'])."'");
 				
 				$row = mysqli_fetch_assoc($results);
-
-				if($row['usr'])
+				
+				if($row['user_name'])
 				{
 					// If everything is OK UserHandling
 					
-					$_SESSION['usr']=$row['usr'];
-					$_SESSION['id'] = $row['id'];
+					$_SESSION['usr']=$row['user_name'];
+					$_SESSION['user_id'] = $row['user_id'];
 					$_SESSION['rememberMe'] = $_POST['rememberMe'];
 					
 					// Store some data in the session

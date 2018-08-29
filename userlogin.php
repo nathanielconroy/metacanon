@@ -2,7 +2,6 @@
 <html>
 <title>METACANON</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="style.css">
 
 <body>
 
@@ -11,7 +10,7 @@ include 'header.php';
 
 if (isset($_POST['presetname']))
 {
-    $userid = $_SESSION['id'];
+    $userid = $_SESSION['user_id'];
     $metausername = $_SESSION['usr'];
     $presetname = addslashes($_POST['presetname']);
     
@@ -48,7 +47,7 @@ if (isset($_POST['deleteid']))
 
 <div style="padding-bottom:16px">
 
-<?php if(!isset($_SESSION['id'])): ?>
+<?php if(!isset($_SESSION['user_id'])): ?>
   <div class="w3-col l6 s12" style="padding:8px;margin-bottom:8px">
     <div class="w3-container w3-border w3-card-2" style="height:427px">
     
@@ -106,19 +105,19 @@ if (isset($_POST['deleteid']))
 <div class="w3-col l6 s12" style="padding:8px;margin-bottom:8px">
   <div class="w3-container w3-border w3-card-2">
   <h3>Hello <?php echo $_SESSION['usr'] ? $_SESSION['usr'] : 'Guest';?>!</h3>
-  <p>The following statstics are based on the standard metacanon list of twentieth century American fiction. User statistics for custom canons will become available with the next update (metacanon 0.8).</p>
+  <p>The following statistics are based on the standard metacanon list of twentieth century American fiction. User statistics for custom canons will become available in a future update.</p>
 
 <?php 
 
-$booksreadcount = substr_count($booksread, ',', 1);
-$booksreadarray = explode(",", $booksread);
+$booksreadcount = count($booksread);
+$booksreadarray = $booksread;
 $ids = DatabaseAccessor::getBooksForUser();
 $idsarray = array();
 
 while (($rowids = mysqli_fetch_assoc($ids)))
 
 {
-$idsarray[] = $rowids['ID'];
+$idsarray[] = $rowids['work_id'];
 }
 
 $femaleIdsArray = array();
@@ -128,11 +127,11 @@ mysqli_data_seek( $ids, 0 );
 
 while (($rowids = mysqli_fetch_assoc($ids))){
 	
-	if ($rowids['authorgender'] == 'Male'){
-	$maleIdsArray[] = $rowids['ID'];
+	if ($rowids['author_gender'] == 'Male'){
+	$maleIdsArray[] = $rowids['work_id'];
 	}
-	if ($rowids['authorgender'] == 'Female'){
-	$femaleIdsArray[] = $rowids['ID'];
+	if ($rowids['author_gender'] == 'Female'){
+	$femaleIdsArray[] = $rowids['work_id'];
 	}
 }
 $booksRead20th = array_intersect($booksreadarray,$idsarray);
@@ -191,12 +190,12 @@ echo $booksreadcount-count($booksread1000). " of the books you've read (" .$perc
   <h3>User Presets</h3>
   <p id="presetslist"><?php
   
-  $presets = UserHandling::GetUserPresets($_SESSION['id']);
+  $presets = UserHandling::GetUserPresets($_SESSION['user_id']);
   $presetCount = 0;
   while ($ids = mysqli_fetch_assoc($presets))
   {
 
-  echo '<a href="' .$ids['preseturl']. '">' .$ids['presetname'] . '</a> <a href="#" class="w3-tooltip" onclick="document.getElementById(\'modal5\').style.display=\'block\';defineid(' .$ids['presetid']. ')">(x)<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Delete preset.</span></a><br>';
+  echo '<a href="' .$ids['preset_url']. '">' .$ids['preset_name'] . '</a> <a href="#" class="w3-tooltip" onclick="document.getElementById(\'modal5\').style.display=\'block\';defineid(' .$ids['preset_id']. ')">(x)<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Delete preset.</span></a><br>';
   
   ++$presetCount;
   }

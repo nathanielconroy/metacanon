@@ -33,6 +33,7 @@ else
 
 $included_genres = [];
 $genres = DatabaseAccessor::getGenres();
+$genre_names = array();
 
 while ($genre_row = mysqli_fetch_array($genres))
 {
@@ -40,6 +41,8 @@ while ($genre_row = mysqli_fetch_array($genres))
 	{
 		$included_genres[] = $genre_row['name'];
 	}
+	
+	$genre_names[$genre_row['name']] = $genre_row['human_readable_name'];
 }
 
 // Reset genres object back to first row.
@@ -86,7 +89,7 @@ mysqli_data_seek($tags, 0);
 
 
 
-if (empty($_GET['order'])) {$order = 'newscore';}
+if (empty($_GET['order'])) {$order = 'score';}
 else {$order = htmlspecialchars($_GET["order"]);}
 
 
@@ -111,53 +114,16 @@ else
 	$faulkner = true;
 }
 
-//get weight for Language and Literature scores
-if (empty ($_GET["langlitdata"]))
-{$langLitWeight = "1" ;}
-else
-{$langLitWeight = $_GET["langlitdata"];}
-
-//get weight for gsscores
-if (empty($_GET["gsdata"]))
-{$gsWeight = "1" ;}
-else
-{$gsWeight = $_GET["gsdata"];}
-
-//get weight for jstorscores
-if (empty($_GET["jstordata"]))
-{$jstorWeight = "0" ;}
-else
-{$jstorWeight = $_GET["jstordata"];}
-
-//get weight for alhscores
-if (empty($_GET["alhdata"]))
-{$alhWeight = "1" ;}
-else
-{$alhWeight = $_GET["alhdata"];}
-
-//get weight for alscores
-if (empty($_GET["aldata"]))
-{$alWeight = "1" ;}
-else
-{$alWeight = $_GET["aldata"];}
-
-//get weight for nytscores
-if (empty($_GET["nytdata"]))
-{$nytWeight = "0" ;}
-else
-{$nytWeight = $_GET["nytdata"];}
-
-//get weight for pscores
-if (empty($_GET["pdata"]))
-{$pulitzerWeight = "1" ;}
-else
-{$pulitzerWeight = $_GET["pdata"];}
-
-//get weight for nbascores
-if (empty($_GET["nbadata"]))
-{$nbaWeight = "1" ;}
-else
-{$nbaWeight = $_GET["nbadata"];}
+$weights = array(
+	'nba' => isset($_GET['nbadata']) ? $_GET['nbadata'] : 1,
+	'pulitzer' => isset($_GET['pdata']) ? $_GET['pdata'] : 1,
+	'jstor_lang_lit' => isset($_GET['langlitdata']) ? $_GET['langlitdata'] : 1,
+	'google_scholar' => isset($_GET['gsdata']) ? $_GET['gsdata'] : 1,
+	'jstor' => isset($_GET['jstordata']) ? $_GET['jstordata'] : 0,
+	'alh' => isset($_GET['alhdata']) ? $_GET['alhdata'] : 1,
+	'american_literature' => isset($_GET['aldata']) ? $_GET['aldata'] : 1,
+	'nyt' => isset($_GET['nytdata']) ? $_GET['nytdata'] : 0,
+);
 
 //set default number of titles
 if (empty($_GET["numtitles"])) { $numtitles = 100; }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <title>METACANON</title>
-<meta name="viewport" content="width=device-width, initial-scale=1; text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" http-equiv="Content-Type">
 
 <?php 
 
@@ -45,51 +45,10 @@ $results = DatabaseAccessor::GetStandardResults($queryBuilder);
   </tr>
 
 <?php
-$rowcolor = 0;
-$relativerank = $startnumber + 1;
-$id = 1;
-$hiddenrow = 1;
-
-// Display the text of each novel in a table
-mysqli_data_seek( $results, 0 );
-while ( $row = mysqli_fetch_array($results) ) {
-
-echo('<tr');
-
-if ($rowcolor % 2 == 0) {print ' style="background-color: #eeeeee;"';}
-echo '><td>'.$relativerank. '</td><td>'; 
-if ( /*strpos($booksread,"," .$row['ID']. ",") !== */ false )  {print '<span id="mark' .$row['ID']. '" onclick="markasunread(' .$row['ID']. ')" class="w3-tooltip" style="cursor:pointer">&#x1f453;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as unread.</span></span></td><td style="cursor:pointer"';}
-else {echo '<span href="#" id="mark' .$row['ID']. '" ';
-  if (/*!$_SESSION['id']*/ true) {echo 'onclick="document.getElementById(\'modal1\').style.display=\'block\'"';}
-  else {echo 'onclick="markasread(' .$row['ID']. ')"';}
-  echo ' style="color:#dddddd;cursor:pointer" class="w3-tooltip">&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span></span></td><td style="cursor:pointer"';}
-echo ' id="row' . $id . '">';    
-if ($row["genre"] == 'article'){echo '"';}
-else {echo '<i>';}
-echo $row["Title"];
-if ($row["genre"] == 'article'){echo '"';}
-else {echo '</i>';}
-echo '</td><td><a href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=' .$row["Year"]. '&yearend=' .$row["Year"]. '&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=score">' .$row["Year"]. '</a></td><td>' .number_format($row["newscore"],2);
-
-asterisk();
-cross();
-doublecross();
-
-echo '</td></tr>';
-echo '<tr id="hiddenrow' . $hiddenrow. '">';
-echo '<td colspan="2"></td><td colspan="4"><b>Genre</b>: ' .$row["genre"]. '<br><br>';
-
-include 'scoreinfobox.php';
-
-$relativerank = $relativerank + 1;    
-$rowcolor = $rowcolor + 1;
-$id = $id +1;
-$hiddenrow = $hiddenrow + 1;
-}
-
-if ($id != 1){
-	mysqli_data_seek( $results, 0 );
-}
+	$mobile = False;
+	$show_author = False;	
+	$logged_in = isset($_SESSION['user_id']);
+	echo HTMLGenerator::generateBookTable($startnumber, $mobile, $show_author, $logged_in, $fictionResults, $genre_names, $weights);
 ?>
 </table>
 
@@ -102,41 +61,10 @@ if ($id != 1){
   </tr>
 
 <?php
-$rowcolor = 0;
-$relativerank = $startnumber + 1;
-$id = 1;
-$hiddenrow = 1;
-
-// Display the text of each novel in a table
-while ( $row = mysqli_fetch_array($results) ) {
-echo('<tr');
-  
-if ($rowcolor % 2 == 0) {print ' style="background-color: #eeeeee;"';}
-echo '><td>'.$relativerank. '</td><td>'; 
-if ( strpos($booksread,"," .$row['ID']. ",") !== false )  {print '<span id="mmark' .$row['ID']. '" onclick="markasunread(' .$row['ID']. ')" class="w3-tooltip" style="cursor:pointer">&#x1f453;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as unread.</span></span></td><td style="cursor:pointer"';}
-else {echo '<span href="#" id="mmark' .$row['ID']. '" ';
-  if (!$_SESSION['id']) {echo 'onclick="document.getElementById(\'modal1\').style.display=\'block\'"';}
-  else {echo 'onclick="markasread(' .$row['ID']. ')"';}
-  echo ' style="color:#dddddd;cursor:pointer" class="w3-tooltip">&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span></span></td><td style="cursor:pointer"';}
-echo ' id="row' . $id . 'm"><strong>';    
-if ($row["genre"] == 'article'){echo '"';}
-else {echo '<i>';}
-echo $row["Title"];
-if ($row["genre"] == 'article'){echo '"';}
-else {echo '</i>';}
-echo '</strong> (<a href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=' .$row["Year"]. '&yearend=' .$row["Year"]. '&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=score">' .$row["Year"]. '</a>)<br><a href="author.php?authorpage=' .$row["fullname"]. '">' .$row["Author_First_Name"]. ' ' .$row["Author"]. '</a></td><td>' .number_format($row["newscore"],2);
-asterisk();
-cross();
-doublecross();
-echo '</td></tr><tr id="hiddenrow' . $hiddenrow. 'm">';
-echo '<td colspan="2"></td><td colspan="2"><b>Genre</b>: ' .$row["genre"]. '<br><br>';
-include 'scoreinfobox.php';
-
-$relativerank = $relativerank + 1;    
-$rowcolor = $rowcolor + 1;
-$id = $id +1;
-$hiddenrow = $hiddenrow + 1;
-}
+	$mobile = True;
+	$show_author = False;	
+	$logged_in = isset($_SESSION['user_id']);
+	echo HTMLGenerator::generateBookTable($startnumber, $mobile, $show_author, $logged_in, $fictionResults, $genre_names, $weights);
 ?>
 </table>
 

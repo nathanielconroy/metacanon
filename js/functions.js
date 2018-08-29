@@ -4,56 +4,6 @@ $(document).ready(function()
 	}
 );
 
-//create popout status menus for each book in the list	
-$(document).ready(function()
-{
-	rownumber = 1;
-	while (rownumber < 101)
-	{
-		$("#hiddenrow" + rownumber).hide();
-		rownumber += 1;
-	}
-	
-	function hidethem(a)
-	{
-		$("#row" + a).click(function()
-		{
-		        $("#hiddenrow" + a).toggle();
-		});
-	}
-	
-	var myNumbers = [];
-	for (var i = 1; i <101; i++)
-	{
-		myNumbers.push(i);
-	}
-
-	myNumbers.forEach(hidethem);	
-});
-	
-//create popout status menus for each book in the mobile list	
-$(document).ready(function(){
-	rownumber = 1;
-	while (rownumber < 101){
-	$("#hiddenrow" + rownumber + "m").hide();
-	rownumber += 1;
-	}	
-	
-	function hidethem(a){
-	$("#row" + a + "m").click(function(){
-        $("#hiddenrow" + a + "m").toggle();
-    });
-	}
-	
-	var myNumbers = [];
-	for (var i = 1; i <101; i++){
-		myNumbers.push(i);
-	}
-	myNumbers.forEach(hidethem);
-	
-}); 
-
-
 //add submit form function to page navigation
 function submitform() { document.forms["generatorForm"].submit(); }
 
@@ -86,6 +36,58 @@ $(document).ready(function(){
 	else {}
 });
 
+function setWorkStatus(workId, workStatus)
+{
+	var icon = '';
+	var tooltip = '';
+	var nextStatus = '';
+	
+	if (workStatus == 'read') 
+	{
+		icon = readIcon;
+		tooltip = markUnreadTooltip;
+		nextStatus = 'unread';
+	}
+	else if (workStatus == 'unread')
+	{
+		icon = unreadIcon;
+		tooltip = markWantToReadTooltip;
+		nextStatus = 'want_to_read';
+	}
+	else if (workStatus == 'want_to_read')
+	{
+		icon = wantToReadIcon;
+		tooltip = markPartlyReadTooltip;
+		nextStatus = 'partly_read';
+	}
+	else if (workStatus == 'partly_read')
+	{
+		icon = partlyReadIcon;
+		tooltip = markReadTooltip;
+		nextStatus = 'read';
+	}
+	
+	var color = '#aaaaaa';
+	
+	document.getElementById("mark" + workId).innerHTML = '&#8987;';
+	document.getElementById("mark" + workId).style.color = color;
+	document.getElementById("mmark" + workId).innerHTML = '&#8987;';
+	document.getElementById("mmark" + workId).style.color = color;
+	
+	$.post("markasread.php",{work_id: workId, work_status: workStatus },function(data, status){
+        
+		// Uncomment the alert to get feedback:
+		// alert("Data: " + data + "\nStatus: " + status);
+		document.getElementById("mark" + workId).innerHTML = icon + tooltip;
+		document.getElementById("mark" + workId).style.color = color;
+		document.getElementById("mark" + workId).onclick = function(){setWorkStatus(workId,nextStatus);};
+		
+		document.getElementById("mmark" + workId).innerHTML = icon + tooltip;
+		document.getElementById("mmark" + workId).style.color = color;
+		document.getElementById("mmark" + workId).onclick = function(){setWorkStatus(workId, nextStatus);};
+	});
+}
+
 function markasread(a) {
 	document.getElementById("mark" + a).innerHTML = '&#8987;';
 	document.getElementById("mark" + a).style.color = "#dddddd";
@@ -96,11 +98,11 @@ function markasread(a) {
         
 		// Uncomment the alert to get feedback:
 		// alert("Data: " + data + "\nStatus: " + status);
-		document.getElementById("mark" + a).innerHTML = '&#x1f453;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as unread.</span>';
+		document.getElementById("mark" + a).innerHTML = readIcon + markUnreadTooltip;
 		document.getElementById("mark" + a).style.color = "black";
 		document.getElementById("mark" + a).onclick = function(){markasunread(a);};
 		
-		document.getElementById("mmark" + a).innerHTML = '&#x1f453;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as unread.</span>';
+		document.getElementById("mmark" + a).innerHTML = readIcon + markUnreadTooltip;
 		document.getElementById("mmark" + a).style.color = "black";
 		document.getElementById("mmark" + a).onclick = function(){markasunread(a);};
 	});
@@ -115,11 +117,11 @@ document.getElementById("mmark" + a).style.color = "#dddddd";
 $.post("markasread.php",{markasunread: a},function(data, status){
 		// Uncomment the alert to get feedback:
 		// alert("Data: " + data + "\nStatus: " + status);
-		document.getElementById("mark" + a).innerHTML = '&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span>';
+		document.getElementById("mark" + a).innerHTML = unreadIcon + markReadTooltip;
 		document.getElementById("mark" + a).style.color = "#dddddd";
 		document.getElementById("mark" + a).onclick = function(){markasread(a);};
 		
-		document.getElementById("mmark" + a).innerHTML = '&#9711;<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:8;bottom:25px;width:150px">Mark as read.</span>';
+		document.getElementById("mmark" + a).innerHTML = unreadIcon + markReadTooltip;
 		document.getElementById("mmark" + a).style.color = "#dddddd";
 		document.getElementById("mmark" + a).onclick = function(){markasread(a);};
     });

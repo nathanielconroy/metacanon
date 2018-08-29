@@ -10,3 +10,6 @@ error_log
 .project
 .settings/
 *.log
+python/.idea/
+python/__pycache__/
+python/venv/

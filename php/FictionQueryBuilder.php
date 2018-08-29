@@ -24,7 +24,8 @@ class FictionQueryBuilder{
 		$genres,
 		$faulkner,
 		$author,
-		$tags
+		$tags,
+		$user_id
 	)
 	{
 		$this->regions = $regions;
@@ -33,7 +34,7 @@ class FictionQueryBuilder{
 		$this->gender = $gender;
 		$this->groupBy = $groupBy;
 		
-		if ($orderBy == 'newscore')
+		if ($orderBy == 'score')
 		{
 			$this->orderBy = $orderBy . " DESC";
 		}
@@ -54,30 +55,31 @@ class FictionQueryBuilder{
 		$this->pulitzerWeight = $pulitzerWeight;
 		
 		//set corpus frequency correction
-		$this->corpusCorrect = "(100/((ifnull(titlecorpusfreq,0)/150)+100))";
+		$this->corpusCorrect = "(100/((ifnull(title_corpus_freq,0)/150)+100))";
 
 		//set non-unique author name correction
-		$this->nonUniqueAuthor = "(100/((ifnull(nonuniqueauthor,0)/25)+100))";
+		$this->nonUniqueAuthor = "(100/((ifnull(nonunique_author,0)/25)+100))";
 
 		//set nyt corpus frequency correction
-		$this->nytCorpusCorrect = "(100/((ifnull(corpusfreqnyt,0)/50)+100))";
+		$this->nytCorpusCorrect = "(100/((ifnull(corpus_freq_nyt,0)/50)+100))";
 		
 		// Build points function strings.
 		$correctionString = "*($this->corpusCorrect)*($this->nonUniqueAuthor)";
 		$genericPointsFunction = "((POWER(2 * ifnull(%s,0) +1, 1/4) -1)/%f)";
 		$correctedPointsFunction = $genericPointsFunction = "((POWER(2 * (ifnull(%s,0) $correctionString) +1, 1/4) -1)/%f)";
 		
-		$this->googleScholarPointsFunction = sprintf($genericPointsFunction,"googlescholar",.7);
+		$this->googleScholarPointsFunction = sprintf($genericPointsFunction,"google_scholar",.7);
 		$this->jstorPointsFunction = sprintf($correctedPointsFunction,"jstor",1);
 		$this->alhPointsFunction = sprintf($correctedPointsFunction,"alh",.4);
-		$this->americanLiteraturePointsFunction = sprintf($correctedPointsFunction,"americanliterature",.6);
+		$this->americanLiteraturePointsFunction = sprintf($correctedPointsFunction,"american_literature",.6);
 		$this->nytPointsFunction = sprintf($correctedPointsFunction,"nyt",.6);
-		$this->jstorLangLitPointsFunction = sprintf($correctedPointsFunction,"jstorLangLit",1);
+		$this->jstorLangLitPointsFunction = sprintf($correctedPointsFunction,"jstor_lang_lit",1);
 		
 		$this->genres = $genres;
 		$this->faulkner = $faulkner;
 		$this->author = $author;
 		$this->tags = $tags;
+		$this->user_id = $user_id;
 		
 		$this->statisticsLimit = 500;
 		$this->defaultLimit = 5000;
@@ -86,9 +88,9 @@ class FictionQueryBuilder{
 	public function getAuthorsPerGenderQuery()
 	{
 		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
-		$query = "SELECT authorgender, COUNT(DISTINCT authorgender, fullname ) AS num 
+		$query = "SELECT author_gender, COUNT(DISTINCT author_gender, fullname ) AS num 
 			FROM ($innerSelect) AS a
-			GROUP BY authorgender
+			GROUP BY author_gender
 			ORDER BY num DESC
 			LIMIT 0,25";
 		return $query;
@@ -108,9 +110,9 @@ class FictionQueryBuilder{
 	public function getBooksPerGenderQuery()
 	{
 		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
-		$query = "SELECT authorgender, COUNT( authorgender ) AS num
+		$query = "SELECT author_gender, COUNT( author_gender ) AS num
 			FROM ($innerSelect) AS a
-			GROUP BY authorgender
+			GROUP BY author_gender
 			ORDER BY num DESC
 			LIMIT 0,25";
 		return $query;
@@ -119,9 +121,9 @@ class FictionQueryBuilder{
 	public function getBooksPerAuthorQuery()
 	{
 		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
-		$query = "SELECT Author, Author_First_Name, COUNT( fullname ) AS 'num'
+		$query = "SELECT author_last, author_first, COUNT( fullname ) AS 'num'
 			FROM ($innerSelect) AS a
-			GROUP BY Author, Author_First_Name, fullname
+			GROUP BY author_last, author_first, fullname
 			ORDER BY `num` DESC
 			LIMIT 0,25";
 		return $query;
@@ -141,9 +143,9 @@ class FictionQueryBuilder{
 	public function getTopAuthorsByTotalPointsQuery()
 	{
 		$innerSelect = $this->getInnerSelect($this->statisticsLimit);
-		$query = "SELECT Author, Author_First_Name, fullname, SUM(newscore) AS totalscore
+		$query = "SELECT author_last, author_first, fullname, SUM(score) AS totalscore
 			FROM ($innerSelect) AS a             
-			GROUP BY fullname, Author, Author_First_Name 
+			GROUP BY fullname, author_last, author_first 
 			ORDER BY totalscore DESC
 			LIMIT 0,25";
 		return $query;
@@ -152,10 +154,10 @@ class FictionQueryBuilder{
 	public function getFictionQueryOnePerAuthor()
 	{
 		$innerCondition = Conditions::make("a.fullname = b.fullname")
-		->andWith("a.newscore = b.maxScore")
-		->andWith("a.newscore != 0")->sql();
+		->andWith("a.score = b.maxScore")
+		->andWith("a.score != 0")->sql();
 		$innerSelect = $this->getInnerSelect($this->defaultLimit);
-		$innerJoin = "SELECT fullname, MAX(newscore) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
+		$innerJoin = "SELECT fullname, MAX(score) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
 		$select = "SELECT * FROM ($innerSelect) AS a 
 			INNER JOIN ($innerJoin) AS b ON $innerCondition 
 			ORDER BY ".$this->orderBy." 
@@ -164,13 +166,31 @@ class FictionQueryBuilder{
 		return $select;
 	}
 	
-	public function getFictionQuery()
+	private function getOnePerAuthorJoin()
+	{
+		$innerCondition = Conditions::make("a.fullname = b.fullname")
+		->andWith("a.score = b.maxScore")
+		->andWith("a.score != 0")->sql();
+		$innerSelect = $this->getInnerSelect($this->defaultLimit);
+		$innerJoin = "SELECT fullname, MAX(score) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
+		$join = "INNER JOIN ($innerJoin) AS b ON $innerCondition ";
+		return $join;
+	}
+	
+	public function getFictionQuery($onePerAuthor)
 	{
 		$innerSelect = $this->getInnerSelect($this->defaultLimit);
 		
-		$select = "SELECT *
-		FROM ($innerSelect) as a  
-		ORDER BY ".$this->orderBy." 
+		$select = "SELECT * FROM ($innerSelect) AS a ";
+		
+		if ($onePerAuthor) { $select .= $this->getOnePerAuthorJoin(); }
+		if (isset($this->user_id))
+		{
+			$user_select = $this->getUserWorksQuery($this->user_id);
+			$select .= "LEFT OUTER JOIN ($user_select) AS d ON a.work_id = d.user_work_id ";
+		}
+		
+		$select .= "ORDER BY ".$this->orderBy." 
 		LIMIT ".$this->limit." 
 		OFFSET ".$this->offset;
 		
@@ -182,16 +202,16 @@ class FictionQueryBuilder{
 		$conditions = $this->getWhereClause();
 		$calculatedScore = $this->getCalculatedScoreString();
 		$innerSelect = $this->getInnerSelect($this->defaultLimit);
-		return "SELECT COUNT('ID') as total FROM ($innerSelect) as a";
+		return "SELECT COUNT(work_id) as total FROM ($innerSelect) as a";
 	}
 	
 	public function getOnePerAuthCountQuery()
 	{
 		$innerCondition = Conditions::make("a.fullname = b.fullname")
-		->andWith("a.newscore = b.maxScore")
-		->andWith("a.newscore != 0")->sql();
+		->andWith("a.score = b.maxScore")
+		->andWith("a.score != 0")->sql();
 		$innerSelect = $this->getInnerSelect($this->defaultLimit);
-		$innerJoin = "SELECT fullname, MAX(newscore) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
+		$innerJoin = "SELECT fullname, MAX(score) AS maxScore FROM ($innerSelect) as c GROUP BY fullname";
 		$select = "SELECT COUNT('fullname') as total FROM ($innerSelect) AS a 
 			INNER JOIN ($innerJoin) AS b ON $innerCondition 
 			ORDER BY ".$this->orderBy." 
@@ -204,21 +224,21 @@ class FictionQueryBuilder{
 		$conditions = $this->getWhereClause();
 		$calculatedScore = $this->getCalculatedScoreString(); 
 		
-		$innerSelect = "SELECT ID, genre, Title, fullname, Author_First_Name, Author, Year, googlescholar, jstor, jstorLangLit,
-			americanliterature, alh, pulitzer, nba, nyt, authorgender, ".
-			$this->googleScholarPointsFunction." *(".$this->gsWeight.") AS gsscore, ".
-			$this->jstorPointsFunction." *($this->jstorWeight) AS jstorscore, ".
-			$this->alhPointsFunction." *(".$this->alhWeight.") AS alhscore, ".
-			$this->americanLiteraturePointsFunction." *($this->alWeight) AS americanliteraturescore, ".
-			$this->nytPointsFunction." *(".$this->nytWeight.") AS nytscore, ".
-			$this->jstorLangLitPointsFunction." *(".$this->langAndLitWeight.") AS langlitscore, 
-			(100*".$this->corpusCorrect.") AS titlecorpusfreq, 
-			(100*".$this->nonUniqueAuthor.") AS nonuniqueauthor, 
-			(100*".$this->nytCorpusCorrect.") AS corpusfreqnyt, 
-			$calculatedScore AS newscore
+		$innerSelect = "SELECT work_id, genre, title, fullname, author_first, author_last, year, google_scholar, jstor, jstor_lang_lit,
+			american_literature, alh, pulitzer, nba, nyt, author_gender, ".
+			$this->googleScholarPointsFunction." *(".$this->gsWeight.") AS gs_score, ".
+			$this->jstorPointsFunction." *($this->jstorWeight) AS jstor_score, ".
+			$this->alhPointsFunction." *(".$this->alhWeight.") AS alh_score, ".
+			$this->americanLiteraturePointsFunction." *($this->alWeight) AS american_literature_score, ".
+			$this->nytPointsFunction." *(".$this->nytWeight.") AS nyt_score, ".
+			$this->jstorLangLitPointsFunction." *(".$this->langAndLitWeight.") AS lang_lit_score, 
+			(100*".$this->corpusCorrect.") AS title_corpus_freq, 
+			(100*".$this->nonUniqueAuthor.") AS nonunique_author, 
+			(100*".$this->nytCorpusCorrect.") AS corpus_freq_nyt, 
+			$calculatedScore AS score
 		FROM works WHERE $conditions 
 		GROUP BY ".$this->groupBy." 
-		ORDER BY newscore DESC
+		ORDER BY score DESC
 		LIMIT $limit"; // TODO : make this limit a variable.
 		
 		return $innerSelect;
@@ -233,8 +253,8 @@ class FictionQueryBuilder{
 			$this->americanLiteraturePointsFunction *($this->alWeight) +
 			$this->nytPointsFunction *($this->nytWeight) +
 			$this->jstorLangLitPointsFunction *($this->langAndLitWeight) +
-			nba * $this->nbaWeight +
-			pulitzer * $this->pulitzerWeight
+			ifnull(nba,0) * $this->nbaWeight +
+			ifnull(pulitzer,0) * $this->pulitzerWeight
 		";
 	}
 	
@@ -260,7 +280,7 @@ class FictionQueryBuilder{
 		
 		if ($this->gender == "female" OR $this->gender == "male" OR $this->gender == "other")
 		{
-			$conditions .= "AND authorgender = '$this->gender' ";
+			$conditions .= "AND author_gender = '$this->gender' ";
 		}
 		
 		if ($this->author != "all")
@@ -301,6 +321,11 @@ class FictionQueryBuilder{
 		}
 				
 		return $conditions;
+	}
+	
+	private function getUserWorksQuery($user_id)
+	{
+		return "SELECT work_id as user_work_id, status FROM works_read_per_user WHERE user_id = $user_id";
 	}
 }
 ?>

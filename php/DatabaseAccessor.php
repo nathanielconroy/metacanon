@@ -44,11 +44,11 @@ class DatabaseAccessor
 	{
 		$searchTerm = str_replace("'","''",$searchTerm);
 		$searchTerm = htmlspecialchars($searchTerm);
-		$query = "SELECT Author_First_Name, Author, fullname, match( fullname )
+		$query = "SELECT author_first, author_last, fullname, match( fullname )
 			AGAINST ( '%{$searchTerm}%' IN BOOLEAN MODE ) AS relevance
 			FROM works 
 			WHERE match( fullname ) AGAINST ( '%{$searchTerm}%' IN BOOLEAN MODE ) AND genre IN ('novel','collection','novella','other')
-			GROUP BY fullname, Author_First_Name, Author
+			GROUP BY fullname, author_first, author_last
 			ORDER BY relevance DESC";
 		return DatabaseAccessor::getSQLResults($query);
 	}
@@ -60,18 +60,20 @@ class DatabaseAccessor
 		$query = "SELECT COUNT(DISTINCT fullname) as total
 			FROM works 
 			WHERE match( fullname ) AGAINST ( '%{$searchTerm}%' IN BOOLEAN MODE ) AND genre IN ('novel','collection','novella','other')";
-		return DatabaseAccessor::getSQLResults($query);
+		return mysqli_fetch_assoc(DatabaseAccessor::getSQLResults($query))['total'];
 	}
 	
 	static public function getStandardResults($queryBuilder)
 	{
-		$query = $queryBuilder->getFictionQuery();
+		$onePerAuthor = false;
+		$query = $queryBuilder->getFictionQuery($onePerAuthor);
 		return DatabaseAccessor::getSQLResults($query);
 	}
 
 	static public function getOneBookPerAuthor($queryBuilder)
 	{
-		$query = $queryBuilder->getFictionQueryOnePerAuthor();
+		$onePerAuthor = true;
+		$query = $queryBuilder->getFictionQuery($onePerAuthor);
 		return DatabaseAccessor::getSQLResults($query);
 	}
 	
@@ -104,20 +106,20 @@ class DatabaseAccessor
 	{
 		$where = "WHERE Year > 1899 AND Year < 2000 AND region = 'unitedstates'";
 		
-		$results = DatabaseAccessor::getSQLResults("SELECT ID, newscore, authorgender FROM (
+		$results = DatabaseAccessor::getSQLResults("SELECT work_id, score, author_gender FROM (
 
 		SELECT *,
 					
 		(
-		((POWER( 2 * googlescholar +1, 1 /4 ) -1)/.7)+ 
-		((POWER( 2 * jstorLangLit +1, 1 /4 ) -1) / 1)*(100/(POWER(titlecorpusfreq/125,1/2) +100))+
-		((POWER( 2 * alh +1, 1 /4 ) -1) / .4)*(100/(POWER(titlecorpusfreq/125,1/2) +100))+
-		((POWER( 2 * americanliterature +1, 1 /4 ) -1) / .6)*(100/(POWER(titlecorpusfreq/125,1/2) +100))+
+		((POWER( 2 * google_scholar +1, 1 /4 ) -1)/.7)+ 
+		((POWER( 2 * jstor_lang_lit +1, 1 /4 ) -1) / 1)*(100/(POWER(title_corpus_freq/125,1/2) +100))+
+		((POWER( 2 * alh +1, 1 /4 ) -1) / .4)*(100/(POWER(title_corpus_freq/125,1/2) +100))+
+		((POWER( 2 * american_literature +1, 1 /4 ) -1) / .6)*(100/(POWER(title_corpus_freq/125,1/2) +100))+
 		nba + pulitzer
 		)
 		   
 
-		AS newscore FROM works $where) AS a ORDER BY newscore DESC
+		AS score FROM works $where) AS a ORDER BY score DESC
 
 		"
 		);

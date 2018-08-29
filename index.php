@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <title>METACANON</title>
-<meta name="viewport" content="width=device-width, initial-scale=1; text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1" http-equiv="Content-Type">
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@metacanonorg" />
 <meta name="twitter:title" content="METACANON" />
@@ -23,16 +23,16 @@
 	    <div style="width:25%;float:left"><h3>Presets:</h3></div>
 	    <div style="width:75%;float:left;padding-top:16px">
 		    <div style="margin-bottom:15px" align="center">
-		        <a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=newscore&yearstart=1800&yearend=1899&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=newscore" style="width:90%">19th Century</a>
+		        <a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=1800&yearend=1899&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=score" style="width:90%">19th Century</a>
 		    </div>
     		<div style="margin-bottom:15px" align="center">
-    		    <a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=newscore&yearstart=1900&yearend=1999&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=newscore" style="width:90%">20th Century</a>
+    		    <a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=1900&yearend=1999&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=score" style="width:90%">20th Century</a>
     		</div>
     		<div style="margin-bottom:15px" align="center">
-    		    <a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=newscore&yearstart=1800&yearend=2016&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=newscore" style="width:90%">1800 - Present</a>
+    		    <a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=1800&yearend=2016&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=score" style="width:90%">1800 - Present</a>
     		</div>
     		<div style="margin-bottom:15px" align="center">
-    			<a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=newscore&yearstart=1800&yearend=2016&gsdata=0.0&langlitdata=0.0&alhdata=0.0&aldata=0.0&pdata=0.0&nbadata=0.0&nytdata=1&jstordata=0.0&startnumber=0&order=newscore&faulkner=yes" style="width:90%"><i>New York Times</i> Archive</a>
+    			<a class="w3-btn" href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=1800&yearend=2016&gsdata=0.0&langlitdata=0.0&alhdata=0.0&aldata=0.0&pdata=0.0&nbadata=0.0&nytdata=1&jstordata=0.0&startnumber=0&order=score&faulkner=yes" style="width:90%"><i>New York Times</i> Archive</a>
     		</div>
         </div>
     </div>
@@ -72,7 +72,7 @@
         		</div>
         		<div style="width:25%;float:left">
         			<select class="w3-select-2" id="dropdown" name="order" onchange="orderfunction()">
-        				<option value="newscore" <?php echo $selectedrank ?>>Score</option>
+        				<option value="score" <?php echo $selectedrank ?>>Score</option>
         				<option value="year" <?php echo $selectedyear ?>>Year</option>
         				<option value="title" <?php echo $selectedtitle ?>>Title</option>
         				<option value="fullname" <?php echo $selectedauthor ?>>Author</option>
@@ -118,7 +118,7 @@
                 <div class="w3-tooltip"><h3>Althorithm Modifications</h3>
                     <span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:0;bottom:25px;width:250px">Change the weight of these data points in order to change the shape of your canon.</span>
 				</div>
-                <?php WeightSelectionModule(''); ?>
+                <?php WeightSelectionModule('', $weights); ?>
                 <hr>
                 <div style="margin-bottom:15px" align="center">
                     <button class="w3-btn" onclick="orderfunction()" style="width:90%">Generate Canon</button>
@@ -171,7 +171,12 @@
     			<td style="width: 75px; font-weight: bold;" align="undefined" valign="undefined"><a href="#" onclick="year(); submitform();" id="year">Year</a></td>
     			<td style="width: 75px; font-weight: bold;" align="undefined" valign="undefined"><a href="#" onclick="score(); submitform();" id="score">Score</a></td>
 		    </tr>
-		    <?php include 'book_table_desktop.php'; ?>
+		    <?php 
+				$mobile = False;
+				$show_author = True;	
+				$logged_in = isset($_SESSION['user_id']);
+				echo HTMLGenerator::generateBookTable($startnumber, $mobile, $show_author, $logged_in, $fictionResults, $genre_names, $weights);
+			?>
 		</table>
 		
 		<table class="w3-table w3-bordered mobileonly">
@@ -181,7 +186,12 @@
     			<td></td>
     			<td style="width: 75px; font-weight: bold;" align="undefined" valign="undefined"><a href="#" onclick="score(); submitform();" id="score">Score</a></td>
 		    </tr>
-		    <?php include 'book_table_mobile.php'; ?>
+		    <?php 
+				$mobile = True;
+				$show_author = True;	
+				$logged_in = isset($_SESSION['user_id']);
+				echo HTMLGenerator::generateBookTable($startnumber, $mobile, $show_author, $logged_in, $fictionResults, $genre_names, $weights);
+			?>
 		</table>
 		
 		<div class="w3-container" style="text-align: center;">
@@ -235,7 +245,7 @@
 					<div class="w3-third w3-container">
 						<label class="w3-label">Order by:</label>
 						<select class="w3-select" name="order">
-							<option value="newscore" <?php echo $selectedrank ?>>Score</option>
+							<option value="score" <?php echo $selectedrank ?>>Score</option>
 							<option value="year" <?php echo $selectedyear ?>>Year</option>
 							<option value="title" <?php echo $selectedtitle ?>>Title</option>
 							<option value="fullname" <?php echo $selectedauthor ?>>Author</option>
@@ -286,7 +296,7 @@
 					<div class="w3-tooltip"><h4 align="left">Althorithm Modifications</h4>
 						<span class="w3-text w3-tag w3-pale-yellow w3-border" style="position:absolute;left:0;bottom:25px;width:250px">Change the weight of these data points in order to change the shape of your canon.</span>
 					</div>
-					<?php WeightSelectionModule('style="Width:70px"'); ?>
+					<?php WeightSelectionModule('style="Width:70px"', $weights); ?>
 				</div>
 				<div class="w3-col l4 s12" style="padding-left:8px;padding-right:8px;">  
 					<input id="startingentry" type="hidden" name="startnumber" value="0" />

@@ -20,7 +20,7 @@ $totalAuthors = DatabaseAccessor::getTotalAuthors($queryBuilder);
 <div>
 	<div class="w3-third" style="padding:8px">
 		<div class="w3-container w3-border w3-card-2">
-		<p>The following statstics are drawn from the top 500 books in the standard metacanon list of twentieth century American fiction.</p>
+		<p>The following statistics are drawn from the top 500 books in the standard metacanon list of twentieth century American fiction.</p>
 		<p>Statistics for custom canons will become available in a future update.</p>
 		</div>
 		<div class="w3-container w3-border w3-card-2" style="margin-top:16px">
@@ -30,7 +30,7 @@ $totalAuthors = DatabaseAccessor::getTotalAuthors($queryBuilder);
 		<?php
 		while ( $row = mysqli_fetch_array($booksPerGender) ) 
 		{
-			echo ($row["authorgender"]. ': ' .$row["num"]. " (" 
+			echo ($row["author_gender"]. ': ' .$row["num"]. " (" 
 			.number_format(($row["num"]/$totalbooks)*100,2). "%)<br>");
 		}
 		?>
@@ -40,7 +40,7 @@ $totalAuthors = DatabaseAccessor::getTotalAuthors($queryBuilder);
 		<?php
 		while ( $row = mysqli_fetch_array($authorsPerGender) ) 
 		{
-			echo ($row["authorgender"]. ': ' .$row["num"]. " (" 
+			echo ($row["author_gender"]. ': ' .$row["num"]. " (" 
 			.number_format(($row["num"]/$totalAuthors)*100,2). "%)<br>");
 		}
 		?>
@@ -87,8 +87,8 @@ $totalAuthors = DatabaseAccessor::getTotalAuthors($queryBuilder);
 		<?php
 		while ( $row = mysqli_fetch_array($booksPerAuthor) ) 
 		{
-			echo ("<a href='author.php?authorpage=" .$row["Author"]. ", " .$row["Author_First_Name"]. "'>" 
-			.$row["Author_First_Name"]. " " .$row["Author"]. '</a>: ' .$row["num"]. "<br>");
+			echo ("<a href='author.php?authorpage=" .$row["author_last"]. ", " .$row["author_first"]. "'>" 
+			.$row["author_first"]. " " .$row["author_last"]. '</a>: ' .$row["num"]. "<br>");
 		}
 		?>
 		<hr>
@@ -101,8 +101,8 @@ $totalAuthors = DatabaseAccessor::getTotalAuthors($queryBuilder);
 		<?php
 		while ( $row = mysqli_fetch_array($pointsresult) ) 
 		{
-			echo ("<a href='author.php?authorpage=" .$row["Author"]. ", " .$row["Author_First_Name"]. "'>" 
-			.$row["Author_First_Name"]. " " .$row["Author"]. '</a>: ' .number_format($row["totalscore"],2). '<br>');
+			echo ("<a href='author.php?authorpage=" .$row["author_last"]. ", " .$row["author_first"]. "'>" 
+			.$row["author_first"]. " " .$row["author_last"]. '</a>: ' .number_format($row["totalscore"],2). '<br>');
 		}
 		?>
 		<hr>
