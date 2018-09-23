@@ -149,7 +149,7 @@
             <div class="w3-container w3-col l1 s12"></div>
             <div class="w3-container w3-col l10 s12" style="text-align: center;"><h1>AMERICAN FICTION <?php if ($yearstart == $yearend) {echo $yearstart ;} else {echo $yearstart.'-'.$yearend;} ?></h1></div>
             <div class="w3-container w3-col l1 s12" style="padding:16px">
-                <?php if(!$id):?>
+                <?php if(!isset($_SESSION['user_id'])):?>
                 	<a href="#" onclick="document.getElementById('modal1').style.display='block'" class="w3-tooltip">
                 <?php else: ?>
                 	<a href="#" onclick="document.getElementById('modal2').style.display='block'" class="w3-tooltip">

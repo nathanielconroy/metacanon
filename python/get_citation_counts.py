@@ -1,17 +1,34 @@
 from jstor_citations_count_retriever import JstorCitationsCountRetriever
 from google_scholar_citations_count_retriever import GoogleScholarCitationsCountRetriever
-import sys
+from database_access import insert_work
+
+import argparse
 
 
 def main():
 
-    first = sys.argv[1]
-    last = sys.argv[2]
-    titles = sys.argv[3].split('|')
-    year = sys.argv[4]
+    parser = argparse.ArgumentParser(description='Get citations counts.')
+    parser.add_argument('--first_name', nargs='?')
+    parser.add_argument('--last_name', nargs='?')
+    parser.add_argument('--title', nargs='?')
+    parser.add_argument('--year', nargs='?')
+    parser.add_argument('--alt_titles', nargs='*')
+    parser.add_argument('--search_friendly_title', nargs='?')
 
-    title = titles[0]  # First title is considered canonical title. All others are alternates.
+    args = parser.parse_args()
 
+    if not all([args.first_name, args.last_name, args.title, args.year]):
+        print("Missing required command line arguments...")
+        return
+
+    first = args.first_name
+    last = args.last_name
+    title = args.title
+    year = args.year
+    titles = [args.title]
+    titles = titles + args.alt_titles if args.alt_titles else titles
+    search_friendly_title = args.search_friendly_title if args.search_friendly_title else title
+    alternate_titles = args.alt_titles if args.alt_titles else None
 
     jstor_citations = JstorCitationsCountRetriever().get_num_citations(
         author_first_name=first, author_last_name=last, titles=titles)
@@ -37,6 +54,14 @@ def main():
 
     if yes_or_no == 'y':
         print('Inserting record...')
+        insert_work(first=first,
+                    last=last,
+                    title=title,
+                    year=year,
+                    search_friendly_title=search_friendly_title,
+                    alt_titles=alternate_titles,
+                    google_scholar_citations=google_scholar_citations['best_match_num_citations'],
+                    jstor_citations=jstor_citations)
 
 
 if __name__ == "__main__":
