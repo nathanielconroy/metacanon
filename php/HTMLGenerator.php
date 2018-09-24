@@ -122,7 +122,7 @@ class HTMLGenerator {
 		$output .= "<td><span href='#' id='$markid' $on_click style='color:#aaaaaa;cursor:pointer;' class='w3-tooltip'>$read_icon$read_tooltip";
 		$output .= "</span></td>";
 		
-		$author_link = '<a href="author.php?yearstart=1700&yearend=2016&authorpage=' .$row["fullname"]. '">' .$row["author_first"]. ' ' .$row["author_last"]. '</a>';
+		$author_link = '<a href="author.php?yearstart=1700&yearend=2020&authorpage=' .$row["fullname"]. '">' .$row["author_first"]. ' ' .$row["author_last"]. '</a>';
 		$year_link = '<a href="index.php?totalbooks=500&numtitles=100&order=score&yearstart=' .$row["year"]. '&yearend=' .$row["year"]. '&gsdata=1&alhdata=1&aldata=1&pdata=1&nbadata=1&nytdata=0.0&startnumber=0&order=score">' .$row["year"]. '</a>';
 		
 		if ($mobile)

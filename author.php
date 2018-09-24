@@ -8,19 +8,16 @@
 //Get name of author.
 $authorpageshort = $_GET["authorpage"];
 $author = str_replace("'","''",$authorpageshort);
+include 'header.php'; 
 ?>
 
 <body>
-
-<?php include 'header.php'; 
-$results = DatabaseAccessor::GetStandardResults($queryBuilder);
-?>
 
 <div class="w3-col l12 s12" style="padding-right:8px;padding-left:8px">
   <div class="w3-container w3-border w3-card-2" style="margin-top:8px;margin-bottom:16px;min-height:350px">
     <div class="w3-row">
       <div class="w3-container w3-col l1 s12"></div>
-      <div class="w3-container w3-col l10 s12" style="text-align: center;"><h1><?php echo ($row["Author_First_Name"]. ' ' .$row["Author"]); ?></h1></div>
+      <div class="w3-container w3-col l10 s12" style="text-align: center;"><h1><?php echo $authorpageshort; ?></h1></div>
     <div class="w3-container w3-border-bottom w3-row" style="text-align: center;"><p id="pagination1"></p>
   </div>
 
