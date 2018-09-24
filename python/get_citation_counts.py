@@ -13,6 +13,9 @@ def main():
     parser.add_argument('--title', nargs='?')
     parser.add_argument('--year', nargs='?')
     parser.add_argument('--alt_titles', nargs='*')
+    parser.add_argument('--tags', nargs='*')
+    parser.add_argument('--genre', nargs='?')
+    parser.add_argument('--format', nargs='?')
     parser.add_argument('--search_friendly_title', nargs='?')
 
     args = parser.parse_args()
@@ -29,6 +32,9 @@ def main():
     titles = titles + args.alt_titles if args.alt_titles else titles
     search_friendly_title = args.search_friendly_title if args.search_friendly_title else title
     alternate_titles = args.alt_titles if args.alt_titles else None
+    genre = args.genre if args.genre else 'non_fiction'
+    format = args.format if args.format else 'book'
+    tags = args.tags if args.tags else []
 
     jstor_citations = JstorCitationsCountRetriever().get_num_citations(
         author_first_name=first, author_last_name=last, titles=titles)
@@ -61,7 +67,10 @@ def main():
                     search_friendly_title=search_friendly_title,
                     alt_titles=alternate_titles,
                     google_scholar_citations=google_scholar_citations['best_match_num_citations'],
-                    jstor_citations=jstor_citations)
+                    jstor_citations=jstor_citations,
+                    genre=genre,
+                    tags=tags,
+                    format=format)
 
 
 if __name__ == "__main__":

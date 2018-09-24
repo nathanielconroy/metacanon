@@ -25,7 +25,12 @@ class JstorCitationsCountRetriever(CitationsCountRetrieverBase):
             print(raw_html.text)
         else:
             total_results = soup.find("h1").get_text(strip=True)
-        return int(re.sub('[^0-9]', '', total_results))
+
+        try:
+            total_results = int(re.sub('[^0-9]', '', total_results))
+        except ValueError:
+            total_results = 0
+        return total_results
 
     @staticmethod
     def __generate_url(author_first_name, author_last_name, titles):

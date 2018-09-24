@@ -225,7 +225,7 @@ class FictionQueryBuilder{
 		$calculatedScore = $this->getCalculatedScoreString(); 
 		
 		$innerSelect = "SELECT work_id, genre, title, fullname, author_first, author_last, year, google_scholar, jstor, jstor_lang_lit,
-			american_literature, alh, pulitzer, nba, nyt, author_gender, ".
+			american_literature, alh, pulitzer, nba, nyt, author_gender, format, ".
 			$this->googleScholarPointsFunction." *(".$this->gsWeight.") AS gs_score, ".
 			$this->jstorPointsFunction." *($this->jstorWeight) AS jstor_score, ".
 			$this->alhPointsFunction." *(".$this->alhWeight.") AS alh_score, ".

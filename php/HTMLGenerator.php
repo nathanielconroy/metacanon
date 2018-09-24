@@ -114,7 +114,7 @@ class HTMLGenerator {
 		
 		$title = '';
 		$raw_title = $row['title'];
-		if ($row["genre"] == 'article'){$title = "\"$raw_title\"";}
+		if ($row["format"] == 'article'){$title = "\"$raw_title\"";}
 		else {$title = "<i>$raw_title</i>";}
 		
 		$output = "<tr style='background-color: $bg_color;'><td>$row_number</td>";
