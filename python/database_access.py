@@ -17,7 +17,7 @@ def insert_work(first, last, title, search_friendly_title, alt_titles, year,
     db = pymysql.connect(host=CONFIG['host'],
                          user=CONFIG['user'],
                          password=CONFIG['password'],
-                         db='metacanon',
+                         db=CONFIG['db'],
                          charset='utf8mb4',
                          cursorclass=pymysql.cursors.DictCursor)
     with db.cursor() as cur:

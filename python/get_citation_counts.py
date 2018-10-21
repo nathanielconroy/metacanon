@@ -8,10 +8,10 @@ import argparse
 def main():
 
     parser = argparse.ArgumentParser(description='Get citations counts.')
-    parser.add_argument('--first_name', nargs='?')
-    parser.add_argument('--last_name', nargs='?')
-    parser.add_argument('--title', nargs='?')
-    parser.add_argument('--year', nargs='?')
+    parser.add_argument('--first_name', nargs='?', required=True)
+    parser.add_argument('--last_name', nargs='?', required=True)
+    parser.add_argument('--title', nargs='?', required=True)
+    parser.add_argument('--year', nargs='?', required=True)
     parser.add_argument('--alt_titles', nargs='*')
     parser.add_argument('--tags', nargs='*')
     parser.add_argument('--genre', nargs='?')
@@ -19,10 +19,6 @@ def main():
     parser.add_argument('--search_friendly_title', nargs='?')
 
     args = parser.parse_args()
-
-    if not all([args.first_name, args.last_name, args.title, args.year]):
-        print("Missing required command line arguments...")
-        return
 
     first = args.first_name
     last = args.last_name
