@@ -38,7 +38,7 @@ def main():
 
     google_scholar_citations = GoogleScholarCitationsCountRetriever().get_google_scholar_report(
         author_first_name=first, author_last_name=last, title=title)
-    if google_scholar_citations['best_match_num_citations']:
+    if google_scholar_citations['best_match_num_citations'] is not None:
         print("Google Scholar: %s." % google_scholar_citations['best_match_num_citations'])
         print("Google Scholar best match title: %s" % google_scholar_citations['best_match_title'])
     else:
