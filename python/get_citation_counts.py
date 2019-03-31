@@ -39,15 +39,20 @@ def main():
     google_scholar_citations = GoogleScholarCitationsCountRetriever().get_google_scholar_report(
         author_first_name=first, author_last_name=last, title=title)
     if google_scholar_citations['best_match_num_citations'] is not None:
+        num_gs_citations = google_scholar_citations['best_match_num_citations']
         print("Google Scholar: %s." % google_scholar_citations['best_match_num_citations'])
         print("Google Scholar best match title: %s" % google_scholar_citations['best_match_title'])
     else:
+        num_gs_citations = 0
         print("Couldn't find Google Scholar article with matching title.")
     print("")
     print("All google scholar articles:")
     print("")
     for article in google_scholar_citations['articles_list']:
-        print("Title: %s" % article['title'])
+        try:
+            print("Title: %s" % article['title'])
+        except UnicodeEncodeError as e:
+            print(e)
         print("Num citations: %s" % article['num_citations'])
 
     yes_or_no = input("\n"
@@ -62,7 +67,7 @@ def main():
                     year=year,
                     search_friendly_title=search_friendly_title,
                     alt_titles=alternate_titles,
-                    google_scholar_citations=google_scholar_citations['best_match_num_citations'],
+                    google_scholar_citations=num_gs_citations,
                     jstor_citations=jstor_citations,
                     genre=genre,
                     tags=tags,
