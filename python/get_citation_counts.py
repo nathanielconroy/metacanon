@@ -14,8 +14,8 @@ def main():
     parser.add_argument('--year', nargs='?', required=True)
     parser.add_argument('--alt_titles', nargs='*')
     parser.add_argument('--tags', nargs='*')
-    parser.add_argument('--genre', nargs='?')
-    parser.add_argument('--format', nargs='?')
+    parser.add_argument('--genre', nargs='?', required=True)
+    parser.add_argument('--format', nargs='?', required=True)
     parser.add_argument('--search_friendly_title', nargs='?')
 
     args = parser.parse_args()
@@ -28,8 +28,8 @@ def main():
     titles = titles + args.alt_titles if args.alt_titles else titles
     search_friendly_title = args.search_friendly_title if args.search_friendly_title else title
     alternate_titles = args.alt_titles if args.alt_titles else None
-    genre = args.genre if args.genre else 'non_fiction'
-    format = args.format if args.format else 'book'
+    genre = args.genre
+    format = args.format
     tags = args.tags if args.tags else []
 
     jstor_citations = JstorCitationsCountRetriever().get_num_citations(
